@@ -28,21 +28,27 @@ class OtpService
     public function sendOtp(User $user)
     {
         $otp  = $this->getOtp($user->id);
-        if (!$otp || $otp->expired_time < Carbon::now()) {
+        if (!$otp || $otp->expired_at < Carbon::now()) {
             $otp = $this->updateOrCreate($user->id);
             $this->otp_mail_job_controller->processQueue($user->email, new OtpMail($otp->otp));
         }
         return $otp;
     }
 
+    public function verifyOtp($user_id, $otp_code)
+    {
+        $otp = $this->getOtp($user_id);
+        return $otp->otp == $otp_code && $otp->expired_at > Carbon::now();
+    }
+
     public function updateOrCreate($user_id)
     {
-        $expired_time = Carbon::now()->addMinutes(1)->toDate();
+        $expired_at = Carbon::now()->addMinutes(2);
         $random_otp   = random_int(100000, 999999);
         return $this->otp_repository->updateOrCreate([
           "user_id"      => $user_id,
           "otp"          => $random_otp,
-          "expired_time" => $expired_time,
+          "expired_at" => $expired_at,
         ]);
     }
 }

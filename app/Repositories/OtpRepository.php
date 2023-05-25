@@ -15,7 +15,7 @@ class OtpRepository
     {
         return Otp::updateOrCreate(
           ["user_id" => $data["user_id"]],
-          ["otp" => $data["otp"], "expired_time" => $data["expired_time"]]
+          ["otp" => $data["otp"], "expired_at" => $data["expired_at"]]
         );
     }
 }

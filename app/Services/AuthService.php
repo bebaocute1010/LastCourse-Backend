@@ -34,7 +34,19 @@ class AuthService
     public function sendOtp(string $email)
     {
         $user = $this->user_repository->findUser("email", $email);
-        $otp = $this->otp_service->sendOtp($user);
-        return ["expired_time" => $otp->expired_time];
+        $otp  = $this->otp_service->sendOtp($user);
+        return ["expired_at" => $otp->expired_at];
     }
+
+    public function verifyAccount(array $data)
+    {
+        if ($user = $this->user_repository->findUser("email", $data["email"])) {
+            if ($this->otp_service->verifyOtp($user->id, $data["otp"])) {
+                $this->user_repository->update(array("id" => $user->id, "email_verified_at" => Carbon::now()));
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -15,4 +15,9 @@ class UserRepository
     {
         return User::where($field_name, $value)->first();
     }
+
+    public function update(array $data)
+    {
+        return User::find($data["id"])->update($data);
+    }
 }

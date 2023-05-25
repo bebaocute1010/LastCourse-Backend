@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\SendOtpRequest;
+use App\Http\Requests\VerifyAccountRequest;
 use App\Services\AuthService;
 use App\Ultis\MessageResource;
 use App\Ultis\Responses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
@@ -47,6 +49,15 @@ class AuthController extends Controller
           MessageResource::REGISTER_SUCCESS_TITLE,
           MessageResource::REGISTER_SUCCESS_MESSAGE
         );
+    }
+
+    public function verifyAccount(VerifyAccountRequest $request)
+    {
+        $data_validated = $request->validated();
+        if ($this->auth_service->verifyAccount($data_validated)) {
+            return Responses::success(MessageResource::DEFAULT_SUCCESS_TITLE,MessageResource::REGISTER_VERIFY_SUCCESS);
+        }
+        return Responses::error(MessageResource::OTP_INVALID, Response::HTTP_NOT_ACCEPTABLE);
     }
 
     public function sendOtp(SendOtpRequest $request)
