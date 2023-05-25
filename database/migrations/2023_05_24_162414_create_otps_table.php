@@ -13,15 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('otps', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->unique();
-            $table->string('username')->nullable()->unique();
-            $table->string('password')->nullable();
-            $table->string('invite_code', 10)->unique();
-            $table->string('introduced_code', 10)->nullable();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->rememberToken();
+            $table->unsignedBigInteger("user_id");
+            $table->string("otp",6);
+            $table->timestamp("expired_time");
             $table->timestamps();
             $table->softDeletes();
         });
@@ -34,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('otps');
     }
 };
