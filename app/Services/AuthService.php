@@ -42,11 +42,19 @@ class AuthService
     {
         if ($user = $this->user_repository->findUser("email", $data["email"])) {
             if ($this->otp_service->verifyOtp($user->id, $data["otp"])) {
-                $this->user_repository->update(array("id" => $user->id, "email_verified_at" => Carbon::now()));
+                $this->user_repository->update(["id" => $user->id, "email_verified_at" => Carbon::now()]);
                 return true;
             }
         }
         return false;
     }
 
+    public function registerInformation(array $data)
+    {
+        $user = $this->user_repository->findUser("email", $data["email"]);
+        if (!$user || !$user->email_verified_at) {
+            return false;
+        }
+        return $this->user_repository->update(Arr::add($data, "id", $user->id));
+    }
 }

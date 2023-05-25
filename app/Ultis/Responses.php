@@ -14,6 +14,14 @@ class Responses
         return \response()->json($data, Response::HTTP_OK);
     }
 
+    public static function makeTokenData($token) {
+        return [
+          "access_token" => $token,
+          "token_type" => "bearer",
+          "expires_in" => auth()->factory()->getTTL() * 60
+        ];
+    }
+
     public static function successWithToken(string $token) {
         return \response()->json([
           "access_token" => $token,

@@ -11,6 +11,9 @@ class MessageResource
     public const REGISTER_SUCCESS_TITLE = "Đăng ký tài khoản thành công";
     public const REGISTER_SUCCESS_MESSAGE = "Chúc mừng bạn đã đăng ký tài khoản thành công.";
     public const REGISTER_VERIFY_SUCCESS = "Xác thực Email thành công.";
+    public const REGISTER_NOT_VERIFY = "Bạn chưa xác thực Email.";
+    public const REGISTER_INFORMATION_SUCCESS = "Cập nhật thông tin thành công.";
+    public const REGISTER_INFORMATION_FAIL = "Cập nhật thông tin thất bại.";
     public const REGISTER_EMAIL_EXIST = "Email đã có tài khoản.";
     public const REGISTER_USERNAME_EXIST = "Tên đăng nhập đã tồn tại.";
     public const REGISTER_INVITE_CODE_INVALID = "Mã giới thiệu không đúng.";
