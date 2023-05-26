@@ -14,8 +14,8 @@ class OtpRepository
     public function updateOrCreate(array $data)
     {
         return Otp::updateOrCreate(
-          ["user_id" => $data["user_id"]],
-          ["otp" => $data["otp"], "expired_at" => $data["expired_at"]]
+            ["user_id" => $data["user_id"]],
+            ["otp" => $data["otp"], "expired_at" => $data["expired_at"]]
         );
     }
 }

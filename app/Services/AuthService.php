@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Jobs\OtpMailJob;
 use App\Mail\OtpMail;
+use App\Models\User;
 use App\Repositories\UserRepository;
-use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -18,7 +18,7 @@ class AuthService
     public function __construct()
     {
         $this->user_repository = new UserRepository();
-        $this->otp_service     = new OtpService();
+        $this->otp_service = new OtpService();
     }
 
     public function register(array $data)
@@ -34,7 +34,7 @@ class AuthService
     public function sendOtp(string $email)
     {
         $user = $this->user_repository->findUser("email", $email);
-        $otp  = $this->otp_service->sendOtp($user);
+        $otp = $this->otp_service->sendOtp($user);
         return ["expired_at" => $otp->expired_at];
     }
 
@@ -42,7 +42,7 @@ class AuthService
     {
         if ($user = $this->user_repository->findUser("email", $data["email"])) {
             if ($this->otp_service->verifyOtp($user->id, $data["otp"])) {
-                $this->user_repository->update(["id" => $user->id, "email_verified_at" => Carbon::now()]);
+                $this->user_repository->update(["id" => $user->id, "email_verified_at" => now()]);
                 return true;
             }
         }
@@ -52,9 +52,14 @@ class AuthService
     public function registerInformation(array $data)
     {
         $user = $this->user_repository->findUser("email", $data["email"]);
-        if (!$user || !$user->email_verified_at) {
-            return false;
+        if (!$user) {
+            return User::STATUS_NOT_EXIST;
+        } else if (!$user->email_verified_at) {
+            return User::STATUS_NOT_VERIFY;
+        } else if ($user->username) {
+            return User::STATUS_OK;
         }
-        return $this->user_repository->update(Arr::add($data, "id", $user->id));
+        $this->user_repository->update(Arr::add($data, "id", $user->id));
+        return User::STATUS_NOT_REGISTER_INFORMATION;
     }
 }
