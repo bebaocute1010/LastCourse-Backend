@@ -6,6 +6,7 @@ use App\Jobs\OtpMailJob;
 use App\Mail\OtpMail;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -35,7 +36,7 @@ class AuthService
     {
         $user = $this->user_repository->findUser("email", $email);
         $otp = $this->otp_service->sendOtp($user);
-        return ["expired_at" => $otp->expired_at];
+        return ["timestamp" => Carbon::parse($otp->expired_at)->getTimestamp() * 1000];
     }
 
     public function verifyAccount(array $data)

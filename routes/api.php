@@ -13,4 +13,5 @@ Route::prefix("auth")->controller(AuthController::class)->group(function () {
     Route::post("register", "register");
     Route::post("verify-account", "verifyAccount");
     Route::post("register-information", "registerInformation");
+    Route::post("get-otp", "sendOtp");
 });

@@ -30,6 +30,6 @@ class ExceptionProcessor
                 );
             }
         }
-        return JsonResponse::error(MessageResource::EXCEPTION_QUERY_DEFAULT_MESSAGE, Response::HTTP_CONFLICT);
+        return JsonResponse::error($exception->getMessage(), Response::HTTP_CONFLICT);
     }
 }

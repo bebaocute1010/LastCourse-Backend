@@ -24,10 +24,14 @@ class RegisterInformationRequest extends FormRequest
     public function rules()
     {
         return [
-          "email"           => "required|email|exists:users,email",
-          "username"        => "required|string|min:8|max:20",
-          "password"        => "required|string|min:8|max:20|confirmed",
-          "introduced_code" => "nullable|string|digits:10",
+            "email" => "required|email|exists:users,email",
+            "username" => "required|string|min:8|max:20",
+            "password" => "required|string|min:8|max:20|confirmed",
+            "fullname" => "required|string|max:255",
+            "avatar" => "nullable|string|max:500",
+            "birthday" => "required|date",
+            "gender" => "required|numeric",
+            "introduced_code" => "nullable|string|digits:10",
         ];
     }
 }

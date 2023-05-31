@@ -10,7 +10,10 @@ class Responses
     public function success()
     {
         return function (string $title, string $message) {
-            return \response()->json(["title" => $title, "message" => $message], Response::HTTP_OK);
+            return \response()->json([
+                "title" => $title,
+                "message" => $message
+            ], Response::HTTP_OK);
         };
     }
 
@@ -27,7 +30,7 @@ class Responses
             return [
                 "access_token" => $token,
                 "token_type" => "bearer",
-                "expires_in" => auth()->factory()->getTTL() * 60
+                "expires_in" => auth()->factory()->getTTL() * 60,
             ];
         };
 
@@ -36,14 +39,21 @@ class Responses
     public function error()
     {
         return function (string $message, int $status) {
-            return \response()->json(["message" => $message], $status);
+            return \response()->json([
+                "title" => MessageResource::DEFAULT_FAIL_TITLE,
+                "message" => $message
+            ], $status);
         };
     }
 
     public function unauthorized()
     {
         return function () {
-            return \response()->json(["message" => MessageResource::LOGIN_UNAUTHORIZED], Response::HTTP_UNAUTHORIZED);
+            return \response()->json([
+                "title" => MessageResource::DEFAULT_FAIL_TITLE,
+                "message" => MessageResource::LOGIN_UNAUTHORIZED],
+                Response::HTTP_UNAUTHORIZED,
+            );
         };
     }
 }
