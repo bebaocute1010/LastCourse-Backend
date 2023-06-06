@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("user_id");
             $table->string("otp",6);
-            $table->timestamp("expired_time");
+            $table->timestamp("expired_at");
             $table->timestamps();
             $table->softDeletes();
         });

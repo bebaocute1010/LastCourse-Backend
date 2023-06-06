@@ -18,6 +18,11 @@ class User extends Authenticatable implements JWTSubject
     use Notifiable;
     use SoftDeletes;
 
+    public const STATUS_OK = 0;
+    public const STATUS_NOT_VERIFY = 1;
+    public const STATUS_NOT_REGISTER_INFORMATION = 2;
+    public const STATUS_NOT_EXIST = 3;
+
     protected $guarded = [];
 
     protected $hidden = [

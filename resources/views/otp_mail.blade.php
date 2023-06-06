@@ -1,1 +1,1 @@
-<p>{{$otp}}</p>
+<p>Mã OTP của bạn là:<br>{{$otp}}<br>Lưu ý: Không chia sẻ mã này với bất kỳ ai !</p>

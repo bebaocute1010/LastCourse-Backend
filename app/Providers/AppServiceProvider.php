@@ -2,15 +2,12 @@
 
 namespace App\Providers;
 
+use App\Utils\Responses;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
     public function register()
     {
         if ($this->app->environment('local')) {
@@ -19,13 +16,8 @@ class AppServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
     public function boot()
     {
-        //
+        JsonResponse::mixin(new Responses());
     }
 }
