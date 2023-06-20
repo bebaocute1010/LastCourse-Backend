@@ -12,4 +12,6 @@ class Image extends Model
     use SoftDeletes;
 
     protected $guarded = [];
+
+    public const DIR_PATH = "public/uploads/images/";
 }
