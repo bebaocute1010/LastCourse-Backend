@@ -16,6 +16,11 @@ class Uploader
         $this->image_ctl = new ImageController();
     }
 
+    public function getDefaultAvatar()
+    {
+        return Image::DEFAULT_AVATAR_ID;
+    }
+
     public function upload($image, $id = null)
     {
         $filename = $image->store(Image::DIR_PATH);

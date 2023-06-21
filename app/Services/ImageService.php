@@ -22,7 +22,7 @@ class ImageService
             $this->deleteFile($image->url);
             $image->url = $data["url"];
             $image->save();
-            return $this->image_repo->update(["url" => $data["url"]]);
+            return $this->image_repo->update($data);
         }
         return $this->image_repo->create($data);
     }

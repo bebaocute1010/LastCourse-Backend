@@ -18,6 +18,8 @@ class ImageRepository
 
     public function update(array $data)
     {
-        return Image::where("id", $data["id"])->update(["url" => $data["url"]]);
+        $image = Image::find($data["id"]);
+        $image->update(["url" => $data["url"]]);
+        return $image;
     }
 }
