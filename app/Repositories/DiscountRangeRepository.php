@@ -8,6 +8,6 @@ class DiscountRangeRepository
 {
     public function create(array $data)
     {
-        DiscountRange::create($data);
+        return DiscountRange::create($data);
     }
 }

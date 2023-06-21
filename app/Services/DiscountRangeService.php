@@ -15,6 +15,16 @@ class DiscountRangeService
 
     public function create(array $data)
     {
-        return $this->discount_range_repository->create($data);
+        $discount_ranges = [];
+        for ($i = 0; $i < count($data["discount_ranges_min"]); $i++) {
+            $data_create = [
+                "product_id" => $data["product_id"],
+                "min" => $data["discount_ranges_min"][$i],
+                "max" => $data["discount_ranges_max"][$i],
+                "amount" => $data["discount_ranges_amount"][$i],
+            ];
+            $discount_ranges[] = $this->discount_range_repository->create($data_create);
+        }
+        return $discount_ranges;
     }
 }
