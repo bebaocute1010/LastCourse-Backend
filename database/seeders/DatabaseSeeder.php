@@ -3,8 +3,11 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Image;
+use App\Models\User;
+use App\Models\Warehouse;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Artisan;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,19 +18,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        Artisan::call("command:imageSeeder");
-        Artisan::call("command:userSeeder");
-        Artisan::call("command:shopSeeder");
-        Artisan::call("command:categorySeeder");
-        Artisan::call("command:carrierSeeder");
-        Artisan::call("command:conditionSeeder");
-        Artisan::call("command:warehouseSeeder");
-
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $this->call(CarrierSeeder::class);
+        $this->call(CategorySeeder::class);
+        $this->call(ConditionSeeder::class);
+        $this->call(ShopSeeder::class);
+        Image::factory(100)->create();
+        User::factory(100)->create();
+        Warehouse::factory(100)->create();
     }
 }
