@@ -24,6 +24,7 @@ class CreateProductRequest extends FormRequest
     public function rules()
     {
         return [
+            "id" => "nullable|exists:products,id",
             "images" => "nullable|array|min:1|max:10",
             "shop_id" => "required|exists:shops,id",
             "cat_id" => "required|exists:categories,id",

@@ -15,40 +15,65 @@ class ProductController extends Controller
 {
     private $product_service;
     private $uploader;
+    private $variant_keys;
+    private $discount_keys;
 
     public function __construct()
     {
         $this->product_service = new ProductService();
         $this->uploader = new Uploader();
+        $this->variant_keys = [
+            "variant_names",
+            "variant_images",
+            "variants_item_quantity",
+            "variants_item_price",
+        ];
+        $this->discount_keys = [
+            "discount_ranges_min",
+            "discount_ranges_max",
+            "discount_ranges_amount"
+        ];
     }
 
-    public function create(CreateProductRequest $request)
+    public function updateOrCreate(CreateProductRequest $request)
     {
         $data_validated = $request->validated();
         if (!Arr::exists($data_validated, "is_variant")) {
-            $data_validated = $this->removeKeysOfArray($data_validated, [
-                "variant_names",
-                "variant_images",
-                "variants_item_quantity",
-                "variants_item_price",
-            ]);
+            $data_validated = $this->removeKeysOfArray($data_validated, $this->variant_keys);
         }
         if (!Arr::exists($data_validated, "is_buy_more_discount")) {
-            $data_validated = $this->removeKeysOfArray($data_validated, [
-                "discount_ranges_min",
-                "discount_ranges_max",
-                "discount_ranges_amount"
-            ]);
+            $data_validated = $this->removeKeysOfArray($data_validated, $this->discount_keys);
         }
+
         $image_ids = [];
         if (Arr::exists($data_validated, "images")) {
             foreach ($data_validated["images"] as $image) {
                 $image_ids[] = $this->uploader->upload($image)->id;
             }
         }
+
+        if (Arr::exists($data_validated, "id") && $product = $this->product_service->find($data_validated["id"])) {
+            $old_image_ids = $product->image_ids;
+            foreach ($old_image_ids as $id) {
+                $this->uploader->delete($id);
+            }
+            foreach ($product->variants as $variant) {
+                if ($variant->color_image_id) {
+                    $this->uploader->delete($variant->color_image_id);
+                }
+                if ($variant->size_image_id) {
+                    $this->uploader->delete($variant->size_image_id);
+                }
+                $variant->forceDelete();
+            }
+            foreach ($product->discountRanges as $discount) {
+                $discount->forceDelete();
+            }
+        }
+
         Arr::forget($data_validated, "images");
         $data_validated += ["image_ids" => $image_ids, "slug" => $this->createSlug($data_validated["name"])];
-        return $this->product_service->create($data_validated);
+        return $this->product_service->updateOrCreate($data_validated, $this->variant_keys, $this->discount_keys);
     }
 
     private function createSlug($name)

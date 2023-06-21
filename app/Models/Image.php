@@ -13,5 +13,5 @@ class Image extends Model
 
     protected $guarded = [];
 
-    public const DIR_PATH = "public/uploads/images/";
+    public const DIR_PATH = "public/uploads/images";
 }

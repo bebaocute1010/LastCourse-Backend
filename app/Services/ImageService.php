@@ -19,14 +19,28 @@ class ImageService
     {
         if (Arr::exists($data, "id")) {
             $image = $this->image_repo->find($data["id"]);
-            $imagePath = public_path(parse_url($image->url, PHP_URL_PATH));
-            if (File::exists($imagePath)) {
-                File::delete($imagePath);
-            }
+            $this->deleteFile($image->url);
             $image->url = $data["url"];
             $image->save();
             return $this->image_repo->update(["url" => $data["url"]]);
         }
         return $this->image_repo->create($data);
+    }
+
+    public function delete($id)
+    {
+        $image = $this->image_repo->find($id);
+        if ($image) {
+            $this->deleteFile($image->url);
+            $image->forceDelete();
+        }
+    }
+
+    private function deleteFile($url)
+    {
+        $imagePath = public_path(parse_url($url, PHP_URL_PATH));
+        if (File::exists($imagePath)) {
+            File::delete($imagePath);
+        }
     }
 }

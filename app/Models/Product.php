@@ -13,6 +13,11 @@ class Product extends Model
 
     protected $guarded = [];
 
+    public function images()
+    {
+        return Image::whereIn("id", $this->image_ids)->get();
+    }
+
     public function variants()
     {
         return $this->hasMany(ProductVariant::class);

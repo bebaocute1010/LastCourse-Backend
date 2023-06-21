@@ -19,4 +19,9 @@ class ImageController extends Controller
     {
         return $this->image_service->updateOrCreate($data);
     }
+
+    public function delete($id)
+    {
+        return $this->image_service->delete($id);
+    }
 }

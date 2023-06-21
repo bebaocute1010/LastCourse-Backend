@@ -19,12 +19,17 @@ class Uploader
     public function upload($image, $id = null)
     {
         $filename = $image->store(Image::DIR_PATH);
-        $url = Storage::url($filename);
+        $url = config("app.url") . Storage::url($filename);
         $data = [];
         if ($id) {
             $data = Arr::add($data, "id", $id);
         }
         $data = Arr::add($data, "url", $url);
         return $this->image_ctl->updateOrCreate($data);
+    }
+
+    public function delete($id)
+    {
+        $this->image_ctl->delete($id);
     }
 }
