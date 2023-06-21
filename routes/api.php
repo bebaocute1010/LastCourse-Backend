@@ -26,4 +26,5 @@ Route::prefix("product")->controller(ProductController::class)->group(function (
 Route::prefix("shop")->controller(ShopController::class)->group(function () {
     Route::post("create", "updateOrCreate");
     Route::post("update", "updateOrCreate");
+    Route::delete("delete", "delete");
 });

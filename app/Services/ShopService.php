@@ -17,6 +17,11 @@ class ShopService
         $this->uploader = new Uploader();
     }
 
+    public function find($id)
+    {
+        return $this->shop_repository->find($id);
+    }
+
     public function update($id, array $data)
     {
         $shop = $this->shop_repository->find($id);
