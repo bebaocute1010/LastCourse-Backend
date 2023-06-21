@@ -12,6 +12,7 @@ class ProductService
     private $product_repository;
     private $product_variant_ctl;
     private $discount_range_ctl;
+    private $image_ctl;
 
     public function __construct()
     {
@@ -23,6 +24,30 @@ class ProductService
     public function find($id)
     {
         return $this->product_repository->find($id);
+    }
+
+    public function delete($id)
+    {
+        $product = $this->find($id);
+        if ($product) {
+            foreach ($product->variants as $variants) {
+                if ($variants->colorImage) {
+                    $variants->colorImage->delete();
+                }
+                if ($variants->sizeImage) {
+                    $variants->sizeImage->delete();
+                }
+                $variants->delete();
+            }
+            foreach ($product->discountRanges as $discount) {
+                $discount->delete();
+            }
+            foreach ($product->images() as $image) {
+                $image->delete();
+            }
+            return $product->delete();
+        }
+        return $product;
     }
 
     public function updateOrCreate(array $data, array $variant_keys, array $discount_keys)

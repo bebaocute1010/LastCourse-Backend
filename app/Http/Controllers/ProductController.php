@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateProductRequest;
+use App\Http\Requests\DeleteProductRequest;
 use App\Models\Product;
 use App\Services\ProductService;
+use App\Utils\MessageResource;
 use App\Utils\Uploader;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -33,6 +36,15 @@ class ProductController extends Controller
             "discount_ranges_max",
             "discount_ranges_amount"
         ];
+    }
+
+    public function delete(DeleteProductRequest $request)
+    {
+        $data_validated = $request->validated();
+        if ($this->product_service->delete($data_validated["id"])) {
+            return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::PRODUCT_DELETE_SUCCESS);
+        }
+        return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }
 
     public function updateOrCreate(CreateProductRequest $request)
@@ -73,7 +85,13 @@ class ProductController extends Controller
 
         Arr::forget($data_validated, "images");
         $data_validated += ["image_ids" => $image_ids, "slug" => $this->createSlug($data_validated["name"])];
-        return $this->product_service->updateOrCreate($data_validated, $this->variant_keys, $this->discount_keys);
+        if ($this->product_service->updateOrCreate($data_validated, $this->variant_keys, $this->discount_keys)) {
+            if (isset($data_validated["id"])) {
+                return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::PRODUCT_UPDATE_SUCCESS);
+            }
+            return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::PRODUCT_CREATE_SUCCESS);
+        }
+        return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }
 
     private function createSlug($name)

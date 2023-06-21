@@ -19,5 +19,5 @@ Route::prefix("auth")->controller(AuthController::class)->group(function () {
 Route::prefix("product")->controller(ProductController::class)->group(function () {
     Route::post("create", "updateOrCreate");
     Route::post("update", "updateOrCreate");
-    Route::get("images", "getImages");
+    Route::delete("delete", "delete");
 });
