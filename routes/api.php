@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ShopController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,12 @@ Route::prefix("auth")->controller(AuthController::class)->group(function () {
 });
 
 Route::prefix("product")->controller(ProductController::class)->group(function () {
+    Route::post("create", "updateOrCreate");
+    Route::post("update", "updateOrCreate");
+    Route::delete("delete", "delete");
+});
+
+Route::prefix("shop")->controller(ShopController::class)->group(function () {
     Route::post("create", "updateOrCreate");
     Route::post("update", "updateOrCreate");
     Route::delete("delete", "delete");

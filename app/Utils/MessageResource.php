@@ -8,9 +8,13 @@ class MessageResource
     public const DEFAULT_FAIL_TITLE = "Thất bại";
     public const DEFAULT_FAIL_MESSAGE = "Đã xảy ra lỗi.";
 
-    public const PRODUCT_CREATE_SUCCESS = "Thêm sản phẩm thành công";
-    public const PRODUCT_UPDATE_SUCCESS = "Cập nhật sản phẩm thành công";
-    public const PRODUCT_DELETE_SUCCESS = "Xóa sản phẩm thành công";
+    public const SHOP_CREATE_SUCCESS = "Đăng ký shop thành công.";
+    public const SHOP_UPDATE_SUCCESS = "Cập nhật thông tin shop thành công.";
+    public const SHOP_DELETE_SUCCESS = "Xóa shop thành công.";
+
+    public const PRODUCT_CREATE_SUCCESS = "Thêm sản phẩm thành công.";
+    public const PRODUCT_UPDATE_SUCCESS = "Cập nhật sản phẩm thành công.";
+    public const PRODUCT_DELETE_SUCCESS = "Xóa sản phẩm thành công.";
 
     public const REGISTER_SUCCESS_TITLE = "Đăng ký tài khoản thành công";
     public const REGISTER_SUCCESS_MESSAGE = "Chúc mừng bạn đã đăng ký tài khoản thành công.";
