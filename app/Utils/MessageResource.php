@@ -31,6 +31,8 @@ class MessageResource
     public const REGISTER_USERNAME_EXIST = "Tên đăng nhập đã được sử dụng.";
     public const REGISTER_INVITE_CODE_INVALID = "Mã giới thiệu không đúng.";
 
+    public const AUTH_PASSWORD_NOT_CORRECT = "Mật khẩu không chính xác.";
+
     public const LOGIN_SUCCESS_TITLE = "Đăng nhập thành công";
     public const LOGIN_SUCCESS_MESSAGE = "Chúc mừng bạn đã đăng nhập thành công.";
     public const LOGIN_UNAUTHORIZED = "Tài khoản hoặc mật khẩu không chính xác.";
