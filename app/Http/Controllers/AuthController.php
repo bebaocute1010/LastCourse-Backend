@@ -8,6 +8,7 @@ use App\Http\Requests\RegisterInformationRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\SendOtpRequest;
 use App\Http\Requests\VerifyAccountRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\AuthService;
 use App\Utils\MessageResource;
@@ -67,12 +68,12 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request)
     {
-            $data_validated = $request->validated();
-            $this->auth_service->register($data_validated);
-            return JsonResponse::success(
-                MessageResource::REGISTER_SUCCESS_TITLE,
-                MessageResource::REGISTER_SUCCESS_MESSAGE
-            );
+        $data_validated = $request->validated();
+        $this->auth_service->register($data_validated);
+        return JsonResponse::success(
+            MessageResource::REGISTER_SUCCESS_TITLE,
+            MessageResource::REGISTER_SUCCESS_MESSAGE
+        );
     }
 
     public function verifyAccount(VerifyAccountRequest $request)
@@ -139,7 +140,7 @@ class AuthController extends Controller
 
     public function me()
     {
-        return JsonResponse::successWithData(auth()->user());
+        return new UserResource(auth()->user());
     }
 
     public function logout()
