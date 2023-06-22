@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Http\Request;
@@ -24,6 +25,12 @@ Route::prefix("product")->controller(ProductController::class)->group(function (
 });
 
 Route::prefix("shop")->controller(ShopController::class)->group(function () {
+    Route::post("create", "updateOrCreate");
+    Route::post("update", "updateOrCreate");
+    Route::delete("delete", "delete");
+});
+
+Route::prefix("cart")->controller(CartController::class)->group(function () {
     Route::post("create", "updateOrCreate");
     Route::post("update", "updateOrCreate");
     Route::delete("delete", "delete");

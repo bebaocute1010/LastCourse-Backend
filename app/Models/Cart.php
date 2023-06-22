@@ -12,4 +12,12 @@ class Cart extends Model
     use SoftDeletes;
 
     protected $guarded = [];
+
+    public function product()
+    {
+        if ($this->product_variant_id) {
+            return $this->belongsTo(ProductVariant::class);
+        }
+        return $this->belongsTo(Product::class);
+    }
 }
