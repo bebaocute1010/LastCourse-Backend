@@ -13,6 +13,12 @@ class Product extends Model
 
     protected $guarded = [];
 
+    public function getShippingFee()
+    {
+        // Cong thuc tinh gia ship
+        return 0.003 * $this->weight + 0.0000001 * $this->length * $this->width * $this->height;
+    }
+
     public function images()
     {
         return Image::whereIn("id", $this->image_ids)->get();

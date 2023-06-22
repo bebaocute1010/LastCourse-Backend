@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BillController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProductController;
@@ -41,4 +42,13 @@ Route::prefix("comment")->controller(CommentController::class)->group(function (
     Route::post("create", "updateOrCreate");
     Route::post("update", "updateOrCreate");
     Route::delete("delete", "delete");
+});
+
+Route::prefix("bill")->controller(BillController::class)->group(function () {
+    Route::post("create", "updateOrCreate");
+    Route::put("confirm", "updateStatus");
+    Route::put("delivery", "updateStatus");
+    Route::put("success", "updateStatus");
+    Route::put("return", "updateStatus");
+    Route::put("cancel", "updateStatus");
 });
