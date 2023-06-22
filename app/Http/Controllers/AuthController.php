@@ -108,7 +108,7 @@ class AuthController extends Controller
             return JsonResponse::error(MessageResource::DEFAULT_FAIL_MESSAGE, Response::HTTP_CONFLICT);
         } catch (QueryException $exception) {
             if ($exception->getCode() == 23000 && Str::contains($exception->getMessage(), "Duplicate")) {
-                return Response::error(
+                return JsonResponse::error(
                     MessageResource::REGISTER_USERNAME_EXIST,
                     Response::HTTP_NOT_ACCEPTABLE
                 );
