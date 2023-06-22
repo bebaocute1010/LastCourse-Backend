@@ -18,6 +18,18 @@ class Shop extends Model
         return $this->hasMany(Product::class);
     }
 
+    public function getAverageRating()
+    {
+        $totalRating = 0;
+        $ratingCount = 0;
+        $products = $this->products;
+        foreach ($products as $product) {
+            $totalRating += $product->getTotalRating();
+            $ratingCount += $product->evaluateComments()->count();
+        }
+        return round($totalRating / $ratingCount, 1);
+    }
+
     public function followers()
     {
         return $this->hasMany(Follower::class);

@@ -21,6 +21,18 @@ class Uploader
         return Image::DEFAULT_AVATAR_ID;
     }
 
+    public function getImageIds(array $images)
+    {
+        $ids = [];
+        foreach ($images as $image) {
+            if (!$rs = $this->upload($image)) {
+                continue;
+            }
+            $ids[] = $rs->id;
+        }
+        return $ids;
+    }
+
     public function upload($image, $id = null)
     {
         $filename = $image->store(Image::DIR_PATH);
@@ -36,5 +48,12 @@ class Uploader
     public function delete($id)
     {
         $this->image_ctl->delete($id);
+    }
+
+    public function deleteImages(array $ids)
+    {
+        foreach ($ids as $id) {
+            $this->delete($id);
+        }
     }
 }

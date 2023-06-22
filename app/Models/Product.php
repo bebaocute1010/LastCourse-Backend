@@ -28,6 +28,24 @@ class Product extends Model
         return $this->hasMany(Comment::class);
     }
 
+    public function getAverageRating()
+    {
+        $evaluates = $this->evaluateComments();
+        return round($this->getTotalRating() / $evaluates->count(), 1);
+    }
+
+    public function getTotalRating()
+    {
+        return $this->evaluateComments()->sum("rating");
+    }
+
+    public function evaluateComments()
+    {
+        return $this->comments->filter(function ($comment) {
+            return $comment->comment_id === null;
+        });
+    }
+
     public function discountRanges()
     {
         return $this->hasMany(DiscountRange::class);
@@ -35,7 +53,7 @@ class Product extends Model
 
     public function setImageIdsAttribute($value)
     {
-        $this->attributes['image_ids'] = json_encode($value);
+        $this->attributes["image_ids"] = json_encode($value);
     }
 
     public function getImageIdsAttribute($value)

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('comment_id');
+            $table->unsignedBigInteger('comment_id')->nullable();
             $table->json('image_ids');
             $table->string('content', 1000)->nullable();
             $table->unsignedInteger('rating')->default(0);

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Http\Request;
@@ -31,6 +32,12 @@ Route::prefix("shop")->controller(ShopController::class)->group(function () {
 });
 
 Route::prefix("cart")->controller(CartController::class)->group(function () {
+    Route::post("create", "updateOrCreate");
+    Route::post("update", "updateOrCreate");
+    Route::delete("delete", "delete");
+});
+
+Route::prefix("comment")->controller(CommentController::class)->group(function () {
     Route::post("create", "updateOrCreate");
     Route::post("update", "updateOrCreate");
     Route::delete("delete", "delete");
