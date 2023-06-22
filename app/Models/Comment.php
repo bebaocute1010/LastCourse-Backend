@@ -13,6 +13,11 @@ class Comment extends Model
 
     protected $guarded = [];
 
+    public function replies()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     public function images()
     {
         return Image::whereIn("id", $this->image_ids)->get();

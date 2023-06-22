@@ -23,6 +23,14 @@ class ProductService
         $this->uploader = new Uploader();
     }
 
+    public function getDetails($slug)
+    {
+        if ($product = $this->product_repository->findBySlug($slug)) {
+            return $product;
+        }
+        return false;
+    }
+
     public function updateRating($id)
     {
         if ($product = $this->find($id)) {

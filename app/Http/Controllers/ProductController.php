@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\DeleteProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Services\ProductService;
 use App\Utils\MessageResource;
@@ -33,6 +34,16 @@ class ProductController extends Controller
             "discount_ranges_max",
             "discount_ranges_amount"
         ];
+    }
+
+    public function getDetails($slug)
+    {
+        if ($slug) {
+            if ($product = $this->product_service->getDetails($slug)) {
+                return new ProductResource($product);
+            }
+        }
+        return JsonResponse::error("Fail", JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function delete(DeleteProductRequest $request)

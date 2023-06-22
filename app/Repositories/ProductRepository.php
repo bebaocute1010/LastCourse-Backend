@@ -11,6 +11,11 @@ class ProductRepository
         return Product::find($id);
     }
 
+    public function findBySlug($slug)
+    {
+        return Product::where("slug", $slug)->first();
+    }
+
     public function updateOrCreate(array $data)
     {
         if (isset($data["id"])) {

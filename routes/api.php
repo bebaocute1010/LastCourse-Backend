@@ -23,9 +23,13 @@ Route::prefix("auth")->controller(AuthController::class)->group(function () {
 });
 
 Route::prefix("product")->controller(ProductController::class)->group(function () {
+    //middleware auth
     Route::post("create", "updateOrCreate");
     Route::post("update", "updateOrCreate");
     Route::delete("delete", "delete");
+    //
+
+    Route::get("details/{slug}", "getDetails");
 });
 
 Route::prefix("shop")->controller(ShopController::class)->group(function () {
