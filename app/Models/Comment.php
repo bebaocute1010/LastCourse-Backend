@@ -13,6 +13,11 @@ class Comment extends Model
 
     protected $guarded = [];
 
+    public function images()
+    {
+        return Image::whereIn("id", $this->image_ids)->get();
+    }
+
     public function setImageIdsAttribute($value)
     {
         $this->attributes['image_ids'] = json_encode($value);

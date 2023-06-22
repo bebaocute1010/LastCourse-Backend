@@ -8,6 +8,10 @@ class MessageResource
     public const DEFAULT_FAIL_TITLE = "Thất bại";
     public const DEFAULT_FAIL_MESSAGE = "Đã xảy ra lỗi.";
 
+    public const COMMENT_CREATE_SUCCESS = "Đánh giá thành công.";
+    public const COMMENT_UPDATE_SUCCESS = "Cập nhật đánh giá thành công.";
+    public const COMMENT_DELETE_SUCCESS = "Xóa đánh giá thành công.";
+
     public const SHOP_CREATE_SUCCESS = "Đăng ký shop thành công.";
     public const SHOP_UPDATE_SUCCESS = "Cập nhật thông tin shop thành công.";
     public const SHOP_DELETE_SUCCESS = "Xóa shop thành công.";

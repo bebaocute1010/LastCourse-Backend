@@ -19,6 +19,16 @@ class CommentService
         $this->uploader = new Uploader();
     }
 
+    public function delete($id)
+    {
+        if ($comment = $this->comment_repository->find($id)) {
+            $this->uploader->deleteImages($comment->image_ids);
+            $this->product_service->updateRating($comment->product_id);
+            return $comment->delete();
+        }
+        return false;
+    }
+
     public function updateOrCreate(array $data, $id = null)
     {
         $data["user_id"] = 1; //Sau nay sua thanh auth()->id()
