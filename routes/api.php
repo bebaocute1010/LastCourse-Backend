@@ -36,6 +36,8 @@ Route::prefix("shop")->controller(ShopController::class)->group(function () {
     Route::post("create", "updateOrCreate");
     Route::post("update", "updateOrCreate");
     Route::delete("delete", "delete");
+
+    Route::get("get-bills", "getBills");
 });
 
 Route::prefix("cart")->controller(CartController::class)->middleware("auth:api")->group(function () {
@@ -51,11 +53,14 @@ Route::prefix("comment")->controller(CommentController::class)->group(function (
     Route::delete("delete", "delete");
 });
 
-Route::prefix("bill")->controller(BillController::class)->group(function () {
+Route::prefix("bill")->controller(BillController::class)->middleware("auth:api")->group(function () {
     Route::post("create", "updateOrCreate");
     Route::put("confirm", "updateStatus");
     Route::put("delivery", "updateStatus");
     Route::put("success", "updateStatus");
     Route::put("return", "updateStatus");
     Route::put("cancel", "updateStatus");
+
+    Route::get("get", "getBills");
+    Route::get("details", "getBillDetails");
 });

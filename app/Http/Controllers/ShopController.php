@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateShopRequest;
+use App\Models\Bill;
 use App\Services\ShopService;
 use App\Utils\MessageResource;
 use Illuminate\Http\JsonResponse;
@@ -12,10 +13,17 @@ use Illuminate\Http\Request;
 class ShopController extends Controller
 {
     private $shop_service;
+    private $bill_ctl;
 
     public function __construct()
     {
         $this->shop_service = new ShopService();
+        $this->bill_ctl = new BillController;
+    }
+
+    public function getBills()
+    {
+        return $this->bill_ctl->getBills(true);
     }
 
     public function updateOrCreate(CreateShopRequest $request)

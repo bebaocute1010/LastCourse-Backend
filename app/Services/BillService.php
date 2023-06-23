@@ -21,16 +21,21 @@ class BillService
         $this->bill_detail_service = new BillDetailService();
     }
 
+    public function find($id)
+    {
+        return $this->bill_repository->find($id);
+    }
+
     public function updateStatus($id, $status)
     {
-        return $this->bill_repository->updateStatus($id, $status); 
+        return $this->bill_repository->updateStatus($id, $status);
     }
 
     public function updateOrCreate(array $data, $id = null)
     {
         $products = collect($data["products"]);
         Arr::forget($data, "products");
-        $data["user_id"] = 1; // Sau nay thay la auth()->id()
+        $data["user_id"] = auth()->id(); // Sau nay thay la auth()->id()
         $data["shipping_fee"] = $this->getShippingFee($data["carrier_id"], $products->pluck("id")->toArray());
 
         if (!$id) {
