@@ -38,10 +38,11 @@ Route::prefix("shop")->controller(ShopController::class)->group(function () {
     Route::delete("delete", "delete");
 });
 
-Route::prefix("cart")->controller(CartController::class)->group(function () {
+Route::prefix("cart")->controller(CartController::class)->middleware("auth:api")->group(function () {
     Route::post("create", "updateOrCreate");
     Route::post("update", "updateOrCreate");
     Route::delete("delete", "delete");
+    Route::get("get", "getProducts");
 });
 
 Route::prefix("comment")->controller(CommentController::class)->group(function () {

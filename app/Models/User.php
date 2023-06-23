@@ -34,6 +34,11 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
+    public function carts()
+    {
+        return $this->hasMany(Cart::class)->where("quantity", ">", 0);
+    }
+
     public function avatar()
     {
         return Image::find($this->avatar);
