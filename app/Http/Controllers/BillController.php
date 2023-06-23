@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateBillRequest;
 use App\Services\BillService;
+use App\Utils\MessageResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
@@ -40,7 +41,9 @@ class BillController extends Controller
             } else {
                 $status = -1;
             }
-            return $this->bill_service->updateStatus($request->id, $status);
+            if ($this->bill_service->updateStatus($request->id, $status)) {
+                return JsonResponse::success(MessageResource::BILL_UPDATE_STATUS_SUCCESS);
+            }
         }
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }
