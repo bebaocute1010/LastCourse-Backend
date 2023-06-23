@@ -13,7 +13,7 @@ class Comment extends Model
 
     protected $guarded = [];
 
-    public function images()
+    public function getImages()
     {
         return Image::whereIn("id", $this->image_ids)->get();
     }
