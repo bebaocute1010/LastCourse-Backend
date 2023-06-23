@@ -18,7 +18,7 @@ class Comment extends Model
         return $this->hasMany(Comment::class);
     }
 
-    public function images()
+    public function getImages()
     {
         return Image::whereIn("id", $this->image_ids)->get();
     }

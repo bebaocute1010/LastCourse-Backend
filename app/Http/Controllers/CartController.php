@@ -23,12 +23,12 @@ class CartController extends Controller
     {
         $data_validated = $request->validated();
         if ($request->id) {
-            if ($cart = $this->cart_service->update($request->id, $data_validated["quantity"])) {
-                return $cart;
+            if ($this->cart_service->update($request->id, $data_validated["quantity"])) {
+                return JsonResponse::success(MessageResource::CART_UPDATE_PRODUCT_SUCCESS);
             }
         } else {
-            if ($cart = $this->cart_service->create($data_validated)) {
-                return $cart;
+            if ($this->cart_service->create($data_validated)) {
+                return JsonResponse::success(MessageResource::CART_ADD_PRODUCT_SUCCESS);
             }
         }
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
@@ -37,8 +37,8 @@ class CartController extends Controller
     public function delete(Request $request)
     {
         if ($request->id) {
-            if ($cart = $this->cart_service->update($request->id, 0)) {
-                return $cart;
+            if ($this->cart_service->update($request->id, 0)) {
+                return JsonResponse::success(MessageResource::CART_DELETE_PRODUCT_SUCCESS);
             }
         }
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);

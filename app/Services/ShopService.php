@@ -47,7 +47,7 @@ class ShopService
     public function updateRating($id)
     {
         if ($shop = $this->find($id)) {
-            $shop->rating = $shop->getAverageRating();
+            $shop->rating = $this->shop_repository->getAverageRating($shop);
             $shop->save();
         }
     }
