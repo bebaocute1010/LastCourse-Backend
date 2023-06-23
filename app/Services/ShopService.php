@@ -43,4 +43,12 @@ class ShopService
         }
         return $this->shop_repository->create($data);
     }
+
+    public function updateRating($id)
+    {
+        if ($shop = $this->find($id)) {
+            $shop->rating = $this->shop_repository->getAverageRating($shop);
+            $shop->save();
+        }
+    }
 }

@@ -11,6 +11,7 @@ class ProductService
     private $product_repository;
     private $product_variant_service;
     private $discount_range_service;
+    private $shop_service;
     private $uploader;
 
     public function __construct()
@@ -18,7 +19,17 @@ class ProductService
         $this->product_repository = new ProductRepository();
         $this->product_variant_service = new ProductVariantService();
         $this->discount_range_service = new DiscountRangeService();
+        $this->shop_service = new ShopService();
         $this->uploader = new Uploader();
+    }
+
+    public function updateRating($id)
+    {
+        if ($product = $this->find($id)) {
+            $product->rating = $product->getAverageRating();
+            $product->save();
+            $this->shop_service->updateRating($product->shop_id);
+        }
     }
 
     public function find($id)
@@ -53,7 +64,7 @@ class ProductService
     public function updateOrCreate(array $data, array $variant_keys, array $discount_keys)
     {
         if (Arr::exists($data, "images")) {
-            $data = Arr::add($data, "image_ids", $this->getImageIds($data["images"]));
+            $data = Arr::add($data, "image_ids", $this->uploader->getImageIds($data["images"]));
             Arr::forget($data, "images");
         }
 
@@ -105,14 +116,5 @@ class ProductService
             }
         }
         return $product;
-    }
-
-    public function getImageIds(array $images)
-    {
-        $ids = [];
-        foreach ($images as $image) {
-            $ids[] = $this->uploader->upload($image)->id;
-        }
-        return $ids;
     }
 }

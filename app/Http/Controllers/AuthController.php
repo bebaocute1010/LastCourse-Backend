@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterInformationRequest;
 use App\Http\Requests\RegisterRequest;
@@ -14,6 +15,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
@@ -51,6 +53,16 @@ class AuthController extends Controller
             "message" => MessageResource::LOGIN_SUCCESS_MESSAGE,
         ])->all();
         return JsonResponse::successWithData($token_data);
+    }
+
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        $data_validated = $request->validated();
+        if (Hash::check($data_validated["password"], auth()->user()->password)) {
+            $this->auth_service->changePassword($data_validated["new_password"]);
+            return $this->refresh();
+        }
+        return JsonResponse::error(MessageResource::AUTH_PASSWORD_NOT_CORRECT, JsonResponse::HTTP_NON_AUTHORITATIVE_INFORMATION);
     }
 
     public function register(RegisterRequest $request)

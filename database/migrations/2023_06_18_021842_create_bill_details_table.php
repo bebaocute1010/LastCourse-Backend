@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('bill_id');
             $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('product_variant_id')->nullable();
             $table->unsignedInteger('quantity');
             $table->unsignedInteger('price');
             $table->softDeletes();

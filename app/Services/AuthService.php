@@ -22,6 +22,11 @@ class AuthService
         $this->otp_service = new OtpService();
     }
 
+    public function changePassword($newpass)
+    {
+        return $this->user_repository->update(["id" => auth()->id(), "password" => $newpass]);
+    }
+
     public function register(array $data)
     {
         do {

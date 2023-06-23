@@ -22,4 +22,16 @@ class ShopRepository
         $shop->update($data);
         return $shop;
     }
+
+    public function getAverageRating(Shop $shop)
+    {
+        $totalRating = 0;
+        $ratingCount = 0;
+        $products = $shop->products;
+        foreach ($products as $product) {
+            $totalRating += $product->getTotalRating();
+            $ratingCount += $product->evaluateComments()->count();
+        }
+        return round($totalRating / $ratingCount, 1);
+    }
 }
