@@ -13,6 +13,11 @@ class Bill extends Model
 
     protected $guarded = [];
 
+    public function products()
+    {
+        return $this->hasManyThrough(Product::class, BillDetail::class);
+    }
+
     public function details()
     {
         return $this->hasMany(BillDetail::class);

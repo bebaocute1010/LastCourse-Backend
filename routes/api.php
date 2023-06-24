@@ -9,6 +9,12 @@ use App\Http\Controllers\ShopController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::prefix("get")->controller(ProductController::class)->group(function () {
+    Route::get("featured-products", "getFeaturedProducts");
+    Route::get("top-selling-products", "getTopSellingProducts");
+    Route::get("recommended-products", "getRecommendedProducts");
+});
+
 Route::prefix("auth")->controller(AuthController::class)->group(function () {
     Route::middleware("auth")->group(function () {
         Route::post("change-password", "changePassword");

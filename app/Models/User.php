@@ -35,6 +35,11 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
+    public function allProducts()
+    {
+        return $this->bills()->with('details.product')->get()->pluck('details')->flatten()->pluck('product');
+    }
+
     public function shop()
     {
         return $this->hasOne(Shop::class);

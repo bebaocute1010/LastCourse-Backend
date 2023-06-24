@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateProductRequest;
-use App\Http\Requests\DeleteProductRequest;
+use App\Http\Resources\CompactProductResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Services\ProductService;
@@ -34,6 +34,21 @@ class ProductController extends Controller
             "discount_ranges_max",
             "discount_ranges_amount"
         ];
+    }
+
+    public function getRecommendedProducts(Request $request)
+    {
+        return CompactProductResource::collection($this->product_service->getRecommendedProducts($request->page ?? 1));
+    }
+
+    public function getTopSellingProducts()
+    {
+        return CompactProductResource::collection($this->product_service->getTopSellingProducts());
+    }
+
+    public function getFeaturedProducts()
+    {
+        return CompactProductResource::collection($this->product_service->getFeaturedProducts());
     }
 
     public function getDetails($slug)

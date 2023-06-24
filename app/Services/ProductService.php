@@ -23,6 +23,21 @@ class ProductService
         $this->uploader = new Uploader();
     }
 
+    public function getRecommendedProducts($page)
+    {
+        return $this->product_repository->getRecommendedProducts($page);
+    }
+
+    public function getTopSellingProducts()
+    {
+        return $this->product_repository->getTopSellingProducts();
+    }
+
+    public function getFeaturedProducts()
+    {
+        return $this->product_repository->getFeaturedProducts();
+    }
+
     public function getDetails($slug)
     {
         if ($product = $this->product_repository->findBySlug($slug)) {
