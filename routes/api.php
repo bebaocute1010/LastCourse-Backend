@@ -3,16 +3,23 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix("get")->controller(ProductController::class)->group(function () {
-    Route::get("featured-products", "getFeaturedProducts");
-    Route::get("top-selling-products", "getTopSellingProducts");
-    Route::get("recommended-products", "getRecommendedProducts");
+Route::prefix("get")->group(function () {
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get("categories", "getCategories");
+    });
+
+    Route::controller(ProductController::class)->group(function () {
+        Route::any("search-products", "searchProducts");
+        Route::get("featured-products", "getFeaturedProducts");
+        Route::get("top-selling-products", "getTopSellingProducts");
+        Route::get("recommended-products", "getRecommendedProducts");
+    });
 });
 
 Route::prefix("auth")->controller(AuthController::class)->group(function () {
@@ -43,7 +50,7 @@ Route::prefix("shop")->controller(ShopController::class)->middleware("auth:api")
     Route::middleware("shop")->group(function () {
         Route::post("update", "updateOrCreate");
         Route::delete("delete", "delete");
-    
+
         Route::get("infor", "getInforShop");
         Route::get("bills", "getBills");
         Route::get("get-product", "getProduct");

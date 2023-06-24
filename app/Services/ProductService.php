@@ -23,6 +23,35 @@ class ProductService
         $this->uploader = new Uploader();
     }
 
+    public function searchProducts(
+        string $search,
+        $page,
+        array $filter_cats = null,
+        $filter_price_min = null,
+        $filter_price_max = null,
+        $filter_rating = null,
+        bool $sort_newest = false,
+        bool $sort_sell = false,
+        bool $sort_desc_price = null
+    ) {
+        $per_page = 12;
+        $key_words = $search ? explode(" ", $search) : [];
+        $products = $this->product_repository->searchProducts(
+            $key_words,
+            $filter_cats,
+            $filter_price_min,
+            $filter_price_max,
+            $filter_rating,
+            $sort_newest,
+            $sort_sell,
+            $sort_desc_price,
+        );
+        $num_page = ceil($products->count() / $per_page);
+        $data["num_page"] = $num_page;
+        $data["products"] = $products->slice(($page - 1) * $per_page, $per_page);
+        return $data;
+    }
+
     public function getRecommendedProducts($page)
     {
         return $this->product_repository->getRecommendedProducts($page);

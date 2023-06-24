@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Resources\CompactProductResource;
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\SearchProductResource;
 use App\Models\Product;
 use App\Services\ProductService;
 use App\Utils\MessageResource;
@@ -34,6 +35,23 @@ class ProductController extends Controller
             "discount_ranges_max",
             "discount_ranges_amount"
         ];
+    }
+
+    public function searchProducts(Request $request)
+    {
+        return new SearchProductResource(
+            $this->product_service->searchProducts(
+                $request->search ?? "",
+                $request->page ?? 1,
+                $request->filter_cats ?? null,
+                $request->filter_price_min ?? null,
+                $request->filter_price_max ?? null,
+                $request->filter_rating ?? null,
+                $request->sort_newest ?? false,
+                $request->sort_sell ?? false,
+                $request->sort_desc_price == 1 ? true : false,
+            )
+        );
     }
 
     public function getRecommendedProducts(Request $request)
