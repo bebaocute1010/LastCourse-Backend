@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateShopRequest;
 use App\Http\Resources\ProductInforResource;
 use App\Http\Resources\ProductShopResource;
+use App\Http\Resources\ShopInforResource;
 use App\Models\Bill;
 use App\Services\ProductService;
 use App\Services\ShopService;
@@ -24,6 +25,11 @@ class ShopController extends Controller
         $this->shop_service = new ShopService();
         $this->product_service = new ProductService();
         $this->bill_ctl = new BillController;
+    }
+
+    public function getInforShop()
+    {
+        return new ShopInforResource(auth()->user()->shop);
     }
 
     public function getProduct(Request $request)

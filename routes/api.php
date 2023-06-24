@@ -38,6 +38,7 @@ Route::prefix("shop")->controller(ShopController::class)->middleware("auth:api")
         Route::post("update", "updateOrCreate");
         Route::delete("delete", "delete");
     
+        Route::get("infor", "getInforShop");
         Route::get("bills", "getBills");
         Route::get("get-product", "getProduct");
         Route::get("products", "getProducts");
