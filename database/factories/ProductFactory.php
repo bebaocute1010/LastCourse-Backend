@@ -22,7 +22,7 @@ class ProductFactory extends Factory
         return [
             "shop_id" => $shop_id,
             "cat_id" => fake()->numberBetween(1, 10),
-            "condition_id" => fake()->numberBetween(1, 50),
+            "condition_id" => fake()->numberBetween(1, 10),
             "warehouse_id" => $shop_id,
             "carrier_id" => fake()->numberBetween(1, 100),
             "image_ids" => [fake()->numberBetween(1, 100), fake()->numberBetween(1, 100), fake()->numberBetween(1, 100)],

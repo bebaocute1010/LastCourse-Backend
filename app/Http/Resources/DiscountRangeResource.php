@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CompactProductResource extends JsonResource
+class DiscountRangeResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,12 +15,10 @@ class CompactProductResource extends JsonResource
     public function toArray($request)
     {
         return [
-            "slug" => $this->slug,
-            "name" => $this->name,
-            "image" => $this->firstImage->url ?? null,
-            "price" => $this->price,
-            "sold" => $this->sold,
-            "rating" => $this->rating
+            "id" => $this->id,
+            "min" => $this->min,
+            "max" => $this->max,
+            "amount" => $this->amount,
         ];
     }
 }
