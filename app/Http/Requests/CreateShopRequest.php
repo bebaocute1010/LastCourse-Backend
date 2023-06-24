@@ -13,7 +13,7 @@ class CreateShopRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return auth()->check();
     }
 
     /**
@@ -24,7 +24,6 @@ class CreateShopRequest extends FormRequest
     public function rules()
     {
         return [
-            "user_id" => "required|exists:users,id",
             "name" => "required|string|max:50",
             "avatar" => "nullable|image|max:2048",
         ];

@@ -13,6 +13,11 @@ class Product extends Model
 
     protected $guarded = [];
 
+    public function condition()
+    {
+        return $this->belongsTo(ProductCondition::class);
+    }
+
     public function getShippingFee()
     {
         // Cong thuc tinh gia ship
@@ -55,6 +60,24 @@ class Product extends Model
     public function variants()
     {
         return $this->hasMany(ProductVariant::class);
+    }
+
+    public function colors()
+    {
+        return $this->hasMany(ProductVariant::class)
+            ->select("color")
+            ->distinct()
+            ->pluck("color")
+            ->toArray();
+    }
+
+    public function sizes()
+    {
+        return $this->hasMany(ProductVariant::class)
+            ->select("size")
+            ->distinct()
+            ->pluck("size")
+            ->toArray();
     }
 
     public function comments($page = null)

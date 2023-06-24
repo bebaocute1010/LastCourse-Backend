@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Utils\MessageResource;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\JsonResponse;
 
 class CreateProductRequest extends FormRequest
 {
@@ -13,9 +15,8 @@ class CreateProductRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return auth()->check();
     }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -24,9 +25,7 @@ class CreateProductRequest extends FormRequest
     public function rules()
     {
         return [
-            "id" => "nullable|exists:products,id",
             "images" => "nullable|array|min:1|max:10",
-            "shop_id" => "required|exists:shops,id",
             "cat_id" => "required|exists:categories,id",
             "condition_id" => "required|exists:product_conditions,id",
             "warehouse_id" => "required|exists:warehouses,id",

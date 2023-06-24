@@ -48,6 +48,10 @@ class ProductService
     public function delete($id)
     {
         $product = $this->find($id);
+        $shop = auth()->user()->shop;
+        if (!$product || !$shop || $product->shop_id != $shop->id) {
+            return false;
+        }
         if ($product) {
             foreach ($product->variants as $variants) {
                 if ($variants->colorImage) {
@@ -66,7 +70,7 @@ class ProductService
             }
             return $product->delete();
         }
-        return $product;
+        return true;
     }
 
     public function updateOrCreate(array $data, array $variant_keys, array $discount_keys)
@@ -77,6 +81,9 @@ class ProductService
         }
 
         if (Arr::exists($data, "id") && $product = $this->find($data["id"])) {
+            if ($product->shop_id != $data["shop_id"]) {
+                return false;
+            }
             $old_image_ids = $product->image_ids;
             foreach ($old_image_ids as $id) {
                 $this->uploader->delete($id);

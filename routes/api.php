@@ -23,21 +23,25 @@ Route::prefix("auth")->controller(AuthController::class)->group(function () {
 });
 
 Route::prefix("product")->controller(ProductController::class)->group(function () {
-    //middleware auth
-    Route::post("create", "updateOrCreate");
-    Route::post("update", "updateOrCreate");
-    Route::delete("delete", "delete");
-    //
+    Route::middleware(["auth:api", "shop"])->group(function () {
+        Route::post("create", "updateOrCreate");
+        Route::post("update", "updateOrCreate");
+        Route::delete("delete", "delete");
+    });
 
     Route::get("details/{slug}", "getDetails");
 });
 
-Route::prefix("shop")->controller(ShopController::class)->group(function () {
+Route::prefix("shop")->controller(ShopController::class)->middleware("auth:api")->group(function () {
     Route::post("create", "updateOrCreate");
-    Route::post("update", "updateOrCreate");
-    Route::delete("delete", "delete");
-
-    Route::get("get-bills", "getBills");
+    Route::middleware("shop")->group(function () {
+        Route::post("update", "updateOrCreate");
+        Route::delete("delete", "delete");
+    
+        Route::get("bills", "getBills");
+        Route::get("get-product", "getProduct");
+        Route::get("products", "getProducts");
+    });
 });
 
 Route::prefix("cart")->controller(CartController::class)->middleware("auth:api")->group(function () {

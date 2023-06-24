@@ -25,7 +25,7 @@ class ShopService
     public function update($id, array $data)
     {
         $shop = $this->shop_repository->find($id);
-        if (!$shop) {
+        if (!$shop || $shop->user_id != $data["user_id"]) {
             return false;
         }
         if (isset($data["avatar"])) {

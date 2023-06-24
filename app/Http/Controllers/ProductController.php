@@ -46,10 +46,9 @@ class ProductController extends Controller
         return JsonResponse::error("Fail", JsonResponse::HTTP_BAD_REQUEST);
     }
 
-    public function delete(DeleteProductRequest $request)
+    public function delete(Request $request)
     {
-        $data_validated = $request->validated();
-        if ($this->product_service->delete($data_validated["id"])) {
+        if ($request->id && $this->product_service->delete($request->id)) {
             return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::PRODUCT_DELETE_SUCCESS);
         }
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
@@ -58,6 +57,10 @@ class ProductController extends Controller
     public function updateOrCreate(CreateProductRequest $request)
     {
         $data_validated = $request->validated();
+        $data_validated["shop_id"] = auth()->user()->shop->id;
+        if ($request->id) {
+            $data_validated["id"] = $request->id;
+        }
         if (!Arr::exists($data_validated, "is_variant")) {
             $data_validated = Arr::except($data_validated, $this->variant_keys);
         }
@@ -67,7 +70,7 @@ class ProductController extends Controller
 
         $data_validated += ["slug" => $this->createSlug($data_validated["name"])];
         if ($this->product_service->updateOrCreate($data_validated, $this->variant_keys, $this->discount_keys)) {
-            if (isset($data_validated["id"])) {
+            if ($request->id) {
                 return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::PRODUCT_UPDATE_SUCCESS);
             }
             return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::PRODUCT_CREATE_SUCCESS);
