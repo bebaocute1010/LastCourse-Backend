@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Product;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductShopResource extends JsonResource
@@ -19,7 +20,8 @@ class ProductShopResource extends JsonResource
             "name" => $this->name,
             "image" => $this->firstImage->url,
             "price" => $this->price,
-            "status" => $this->is_hidden ? 2 : ($this->inventory <= 0 ? 1 : 0),
+            "status" => $this->is_hidden ? Product::STATUS_HIDDEN
+                : ($this->inventory <= 0 ? Product::STATUS_UNAVAILABLE : Product::STATUS_AVAILABLE),
             "warehouse" => $this->warehouse->name,
             "sold" => $this->sold,
             "inventory" => $this->inventory,

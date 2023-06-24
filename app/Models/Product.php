@@ -13,6 +13,10 @@ class Product extends Model
 
     protected $guarded = [];
 
+    public const STATUS_HIDDEN = "Đã ẩn";
+    public const STATUS_AVAILABLE = "Còn hàng";
+    public const STATUS_UNAVAILABLE = "Hết hàng";
+
     public function condition()
     {
         return $this->belongsTo(ProductCondition::class);
