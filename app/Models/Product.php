@@ -13,10 +13,47 @@ class Product extends Model
 
     protected $guarded = [];
 
+    public const STATUS_HIDDEN = "Đã ẩn";
+    public const STATUS_AVAILABLE = "Còn hàng";
+    public const STATUS_UNAVAILABLE = "Hết hàng";
+
+    public function condition()
+    {
+        return $this->belongsTo(ProductCondition::class);
+    }
+
     public function getShippingFee()
     {
         // Cong thuc tinh gia ship
         return 0.003 * $this->weight + 0.0000001 * $this->length * $this->width * $this->height;
+    }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
+
+    public function relates()
+    {
+        return Product::whereIn("cat_id", [$this->cat_id, $this->category->parent_id])
+            ->orderBy("sold", "desc")
+            ->whereNot("id", $this->id)
+            ->take(12)->get();
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, "cat_id");
+    }
+
+    public function shop()
+    {
+        return $this->belongsTo(Shop::class);
+    }
+
+    public function firstImage()
+    {
+        return $this->belongsTo(Image::class, "image_ids");
     }
 
     public function images()
@@ -29,9 +66,38 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
 
-    public function comments()
+    public function colors()
     {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(ProductVariant::class)
+            ->select("color")
+            ->distinct()
+            ->pluck("color")
+            ->toArray();
+    }
+
+    public function sizes()
+    {
+        return $this->hasMany(ProductVariant::class)
+            ->select("size")
+            ->distinct()
+            ->pluck("size")
+            ->toArray();
+    }
+
+    public function comments($page = null)
+    {
+        if (!$page) {
+            return $this->hasMany(Comment::class);
+        }
+        $perPage = 6;
+        $offset = ($page - 1) * $perPage;
+
+        return $this->hasMany(Comment::class)
+            ->with("replies")
+            ->whereNull("comment_id")
+            ->orderBy("created_at", "desc")
+            ->skip($offset)
+            ->take($perPage)->get();
     }
 
     public function getAverageRating()

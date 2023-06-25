@@ -13,6 +13,11 @@ class Shop extends Model
 
     protected $guarded = [];
 
+    public function avatar()
+    {
+        return Image::find($this->avatar);
+    }
+
     public function products()
     {
         return $this->hasMany(Product::class);

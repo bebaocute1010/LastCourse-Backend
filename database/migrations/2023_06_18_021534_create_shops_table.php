@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('shops', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->unique();
             $table->string('name', 50);
             $table->unsignedBigInteger('avatar');
             $table->double('rating')->default(0);

@@ -15,13 +15,12 @@ class ShopSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 1; $i <= 100; $i++) {
             Shop::updateOrCreate([
                 "user_id" => $i,
                 "name" => "SHOP " . $i,
                 "avatar" => $i,
                 "created_at" => now(),
-                "deleted_at" => now()
             ]);
         }
     }

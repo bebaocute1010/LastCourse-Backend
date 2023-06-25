@@ -15,7 +15,7 @@ class CreateCartRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return auth()->check();
     }
 
     /**
@@ -28,7 +28,6 @@ class CreateCartRequest extends FormRequest
         $variant_id = request("product_variant_id");
         $quantity_max = $variant_id ? ProductVariant::find($variant_id)->quantity : Product::find(request("product_id"))->quantity;
         return [
-            "user_id" => "required|exists:users,id",
             "product_id" => "required|exists:products,id",
             "product_variant_id" => "nullable|exists:product_variants,id",
             "quantity" => ["required", "numeric", "min:0", "max:" . $quantity_max]
