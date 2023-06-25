@@ -24,7 +24,6 @@ class ProductFactory extends Factory
             "cat_id" => fake()->numberBetween(1, 10),
             "condition_id" => fake()->numberBetween(1, 10),
             "warehouse_id" => $shop_id,
-            "carrier_id" => fake()->numberBetween(1, 100),
             "image_ids" => [fake()->numberBetween(1, 100), fake()->numberBetween(1, 100), fake()->numberBetween(1, 100)],
             "is_variant" => null,
             "is_pre_order" => null,

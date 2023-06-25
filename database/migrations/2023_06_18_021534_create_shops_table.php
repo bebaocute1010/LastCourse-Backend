@@ -16,9 +16,12 @@ return new class extends Migration
         Schema::create('shops', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->unique();
+            $table->unsignedBigInteger('carrier_id');
             $table->string('name', 50);
             $table->unsignedBigInteger('avatar');
+            $table->unsignedBigInteger('banner');
             $table->double('rating')->default(0);
+            $table->string('locate');
             $table->softDeletes();
             $table->timestamps();
         });

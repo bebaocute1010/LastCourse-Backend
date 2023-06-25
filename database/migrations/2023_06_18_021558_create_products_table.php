@@ -19,7 +19,6 @@ return new class extends Migration
             $table->unsignedBigInteger('cat_id');
             $table->unsignedBigInteger('condition_id');
             $table->unsignedBigInteger('warehouse_id');
-            $table->unsignedBigInteger('carrier_id');
             $table->json('image_ids')->nullable();
             $table->tinyInteger('is_variant')->nullable();
             $table->tinyInteger('is_pre_order')->nullable();

@@ -24,6 +24,8 @@ return new class extends Migration
             $table->unsignedDouble('shipping_fee')->default(0);
             $table->tinyInteger('status')->default(0);
             $table->unsignedDouble('total')->default(0);
+            $table->tinyInteger("payment_method");
+            $table->string("note")->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
