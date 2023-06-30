@@ -17,6 +17,15 @@ class Product extends Model
     public const STATUS_AVAILABLE = "Còn hàng";
     public const STATUS_UNAVAILABLE = "Hết hàng";
 
+    public function filterRating($rating = null)
+    {
+        return $this->hasMany(Comment::class)
+            ->when($rating !== null, function ($query) use ($rating) {
+                $query->where("rating", $rating);
+            })
+            ->get();
+    }
+
     public function condition()
     {
         return $this->belongsTo(ProductCondition::class);
@@ -86,18 +95,20 @@ class Product extends Model
 
     public function comments($page = null)
     {
-        if (!$page) {
-            return $this->hasMany(Comment::class);
-        }
-        $perPage = 6;
-        $offset = ($page - 1) * $perPage;
+        $per_page = 6;
+        $offset = ($page - 1) * $per_page;
 
         return $this->hasMany(Comment::class)
             ->with("replies")
             ->whereNull("comment_id")
             ->orderBy("created_at", "desc")
             ->skip($offset)
-            ->take($perPage)->get();
+            ->take($per_page)->get();
+    }
+
+    public function allComments()
+    {
+        return $this->hasMany(Comment::class);
     }
 
     public function getAverageRating()
@@ -113,7 +124,7 @@ class Product extends Model
 
     public function evaluateComments()
     {
-        return $this->comments->filter(function ($comment) {
+        return $this->allComments->filter(function ($comment) {
             return $comment->comment_id === null;
         });
     }

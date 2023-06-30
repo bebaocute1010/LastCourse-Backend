@@ -13,6 +13,11 @@ class Cart extends Model
 
     protected $guarded = [];
 
+    public function shop()
+    {
+        return $this->product->shop;
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class);

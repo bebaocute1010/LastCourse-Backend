@@ -13,14 +13,39 @@ class Shop extends Model
 
     protected $guarded = [];
 
+    public function carrier()
+    {
+        return $this->belongsTo(Carrier::class);
+    }
+
+    public function warehouse()
+    {
+        return $this->hasOne(Warehouse::class);
+    }
+
+    public function banner()
+    {
+        return Image::find($this->banner);
+    }
+
     public function avatar()
     {
         return Image::find($this->avatar);
     }
 
-    public function products()
+    public function allProducts()
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function products($page = 1)
+    {
+        $per_page = 24;
+        $offset = ($page - 1) * $per_page;
+
+        return $this->hasMany(Product::class)
+            ->skip($offset)
+            ->take($per_page)->get();
     }
 
     public function followers()
@@ -30,6 +55,6 @@ class Shop extends Model
 
     public function bills()
     {
-        return $this->hasMany(Bill::class);
+        return $this->hasMany(Bill::class)->orderByDesc("created_at");
     }
 }

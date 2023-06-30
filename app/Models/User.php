@@ -47,12 +47,14 @@ class User extends Authenticatable implements JWTSubject
 
     public function bills()
     {
-        return $this->hasMany(Bill::class);
+        return $this->hasMany(Bill::class)->orderByDesc("created_at");
     }
 
     public function carts()
     {
-        return $this->hasMany(Cart::class)->where("quantity", ">", 0);
+        return $this->hasMany(Cart::class)
+            ->where("quantity", ">", 0)
+            ->orderByDesc("created_at");
     }
 
     public function avatar()
