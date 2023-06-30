@@ -5,20 +5,29 @@ use App\Http\Controllers\BillController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ProductConditionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("get")->group(function () {
-    Route::controller(CategoryController::class)->group(function () {
-        Route::get("categories", "getCategories");
+    Route::controller(CategoryController::class)->prefix("category")->group(function () {
+        Route::get("search", "searchCategories");
+        Route::get("level1", "getCategoriesLevel1");
+        Route::get("level2", "getCategoriesLevel2");
     });
+
+    Route::get("conditions", [ProductConditionController::class, "getConditions"]);
 
     Route::controller(ProductController::class)->group(function () {
         Route::any("search-products", "searchProducts");
         Route::get("featured-products", "getFeaturedProducts");
         Route::get("top-selling-products", "getTopSellingProducts");
         Route::get("recommended-products", "getRecommendedProducts");
+    });
+
+    Route::controller(ShopController::class)->group(function () {
+        Route::get("shop/{id}", "getShopProfile");
     });
 });
 
@@ -42,7 +51,9 @@ Route::prefix("product")->controller(ProductController::class)->group(function (
         Route::delete("delete", "delete");
     });
 
+    Route::get("select-variants", "selectVariants");
     Route::get("details/{slug}", "getDetails");
+    Route::get("comments/{slug}", "getComments");
 });
 
 Route::prefix("shop")->controller(ShopController::class)->middleware("auth:api")->group(function () {
@@ -55,6 +66,7 @@ Route::prefix("shop")->controller(ShopController::class)->middleware("auth:api")
         Route::get("bills", "getBills");
         Route::get("get-product", "getProduct");
         Route::get("products", "getProducts");
+        Route::get("products", "getProducts");
     });
 });
 
@@ -62,6 +74,8 @@ Route::prefix("cart")->controller(CartController::class)->middleware("auth:api")
     Route::post("create", "updateOrCreate");
     Route::post("update", "updateOrCreate");
     Route::delete("delete", "delete");
+
+    Route::post("preview-order", "previewOrder");
     Route::get("get", "getProducts");
 });
 

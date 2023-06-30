@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Product;
-use App\Models\ProductVariant;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateCartRequest extends FormRequest
+class PreviewOrderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,9 +24,8 @@ class CreateCartRequest extends FormRequest
     public function rules()
     {
         return [
-            "product_id" => "nullable|exists:products,id",
-            "product_variant_id" => "nullable|exists:product_variants,id",
-            "quantity" => ["required", "numeric", "min:0"]
+            "selected" => "required|array",
+            "selected.*" => "numeric"
         ];
     }
 }

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateCartRequest;
+use App\Http\Requests\PreviewOrderRequest;
 use App\Http\Resources\CartResource;
+use App\Http\Resources\PreviewOrderResource;
 use App\Services\CartService;
 use App\Utils\MessageResource;
 use Illuminate\Http\JsonResponse;
@@ -20,6 +22,12 @@ class CartController extends Controller
         $this->cart_service = new CartService();
     }
 
+    public function previewOrder(PreviewOrderRequest $request)
+    {
+        $data_validated = $request->validated();
+        return PreviewOrderResource::collection($this->cart_service->getProductsSelected($data_validated["selected"]));
+    }
+
     public function getProducts()
     {
         return CartResource::collection(auth()->user()->carts);
@@ -30,7 +38,7 @@ class CartController extends Controller
         $data_validated = $request->validated();
         $data_validated["user_id"] = auth()->id();
         if ($request->id) {
-            if ($this->cart_service->update($request->id, $data_validated["quantity"])) {
+            if ($this->cart_service->update($request->id, $request["quantity"])) {
                 return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::CART_UPDATE_PRODUCT_SUCCESS);
             }
         } else {
