@@ -14,10 +14,15 @@ class CommentResource extends JsonResource
      */
     public function toArray($request)
     {
+        $user = $this->user;
         return [
             "id" => $this->id,
+            "user" => [
+                "name" => $user->fullname,
+                "avatar" => $user->avatar()->url,
+            ],
             "content" => $this->content,
-            "images" => $this->images()->pluck("url"),
+            "images" => $this->getImages()->pluck("url"),
             "rating" => $this->rating,
             "replies" => CommentResource::collection($this->replies),
         ];

@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateProductRequest;
+use App\Http\Resources\CommentResource;
 use App\Http\Resources\CompactProductResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\SearchProductResource;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Services\ProductService;
 use App\Utils\MessageResource;
 use Illuminate\Http\JsonResponse;
@@ -36,6 +38,21 @@ class ProductController extends Controller
             "discount_ranges_amount"
         ];
     }
+    public function selectVariants(Request $request)
+    {
+        // if ($product = $this->product_service->find($request->id)) {
+        //     return ProductVariant
+        // }
+    }
+
+    public function getComments($slug, Request $request)
+    {
+
+        if ($product = $this->product_service->findBySlug($slug)) {
+            return CommentResource::collection($product->comments($request->page));
+        }
+        return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
+    }
 
     public function searchProducts(Request $request)
     {
@@ -49,7 +66,7 @@ class ProductController extends Controller
                 $request->filter_rating ?? null,
                 $request->sort_newest ?? false,
                 $request->sort_sell ?? false,
-                $request->sort_desc_price == 1 ? true : false,
+                $request->sort_desc_price ?? null,
             )
         );
     }
@@ -90,7 +107,12 @@ class ProductController extends Controller
     public function updateOrCreate(CreateProductRequest $request)
     {
         $data_validated = $request->validated();
-        $data_validated["shop_id"] = auth()->user()->shop->id;
+        $shop = auth()->user()->shop;
+        $data_validated = array_merge($data_validated, [
+            "shop_id" => $shop->id,
+            "warehouse_id" => $shop->warehouse->id,
+            "slug" => $this->createSlug($data_validated["name"]),
+        ]);
         if ($request->id) {
             $data_validated["id"] = $request->id;
         }
@@ -101,7 +123,6 @@ class ProductController extends Controller
             $data_validated = Arr::except($data_validated, $this->discount_keys);
         }
 
-        $data_validated += ["slug" => $this->createSlug($data_validated["name"])];
         if ($this->product_service->updateOrCreate($data_validated, $this->variant_keys, $this->discount_keys)) {
             if ($request->id) {
                 return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::PRODUCT_UPDATE_SUCCESS);

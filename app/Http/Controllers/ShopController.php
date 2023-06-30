@@ -7,7 +7,7 @@ use App\Http\Requests\CreateShopRequest;
 use App\Http\Resources\ProductInforResource;
 use App\Http\Resources\ProductShopResource;
 use App\Http\Resources\ShopInforResource;
-use App\Models\Bill;
+use App\Http\Resources\ShopProfileResource;
 use App\Services\ProductService;
 use App\Services\ShopService;
 use App\Utils\MessageResource;
@@ -27,6 +27,14 @@ class ShopController extends Controller
         $this->bill_ctl = new BillController;
     }
 
+    public function getShopProfile($id)
+    {
+        if ($shop = $this->shop_service->find($id)) {
+            return new ShopProfileResource($shop);
+        }
+
+    }
+
     public function getInforShop()
     {
         return new ShopInforResource(auth()->user()->shop);
@@ -44,7 +52,7 @@ class ShopController extends Controller
 
     public function getProducts()
     {
-        return ProductShopResource::collection(auth()->user()->shop->products);
+        return ProductShopResource::collection(auth()->user()->shop->allProducts);
     }
 
     public function getBills()
@@ -72,7 +80,7 @@ class ShopController extends Controller
     {
         if ($shop = $this->shop_service->find($request->id)) {
             if ($shop->user_id == auth()->id()) {
-                $shop->products()->delete();
+                $shop->allProducts()->delete();
                 $shop->followers()->delete();
                 $shop->delete();
                 return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::SHOP_DELETE_SUCCESS);

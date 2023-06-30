@@ -62,7 +62,6 @@ class ProductRepository
                     ->whereIn("id", $cat_ids)
                     ->orWhereIn("parent_id", $cat_ids);
             })
-                ->skip(($page - 1) * $per_page)
                 ->orderByDesc("sold")
                 ->get();
         }

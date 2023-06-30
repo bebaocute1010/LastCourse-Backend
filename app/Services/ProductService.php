@@ -23,6 +23,11 @@ class ProductService
         $this->uploader = new Uploader();
     }
 
+    public function findBySlug(string $slug)
+    {
+        return $this->product_repository->findBySlug($slug);
+    }
+
     public function searchProducts(
         string $search,
         $page,
