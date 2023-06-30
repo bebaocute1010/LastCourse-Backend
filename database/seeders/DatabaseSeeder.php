@@ -14,6 +14,7 @@ use App\Models\Image;
 use App\Models\Product;
 use App\Models\ProductCondition;
 use App\Models\ProductVariant;
+use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
