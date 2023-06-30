@@ -13,7 +13,7 @@ class CreateBillRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return auth()->check();
     }
 
     /**
@@ -24,16 +24,12 @@ class CreateBillRequest extends FormRequest
     public function rules()
     {
         return [
-            "shop_id" => "required|numeric|exists:shops,id",
-            "carrier_id" => "required|numeric|exists:carriers,id",
             "receiver" => "required|string|max:50",
             "phone" => "required|string|max:20",
             "address" => "required|string|max:500",
-            "products" => "required|array",
-            "products.*.id" => "required|numeric|exists:products,id",
-            "products.*.variant_id" => "nullable|numeric|exists:product_variants,id",
-            "products.*.price" => "required|numeric",
-            "products.*.quantity" => "required|numeric"
+            "cart_ids" => "required|array",
+            "cart_ids.*" => "required|numeric|exists:carts,id",
+            "payment_method" => "required|numeric|in:0,1"
         ];
     }
 }
