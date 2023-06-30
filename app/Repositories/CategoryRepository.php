@@ -6,7 +6,17 @@ use App\Models\Category;
 
 class CategoryRepository
 {
-    public function getCategories(array $keywords = [])
+    public function getCategoriesLevel1()
+    {
+        return Category::whereNull("parent_id")->get();
+    }
+
+    public function getCategoriesLevel2($parent_id)
+    {
+        return Category::where("parent_id", $parent_id)->get();
+    }
+
+    public function searchCategories(array $keywords = [])
     {
         $categories = Category::where(function ($query) use ($keywords) {
             foreach ($keywords as $keyword) {
