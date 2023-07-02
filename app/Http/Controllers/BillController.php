@@ -47,23 +47,26 @@ class BillController extends Controller
 
     public function updateStatus(Request $request, Route $route)
     {
-        if ($request->id) {
-            if (str_ends_with($route->uri, "confirm")) {
-                $status = 1;
-            } else if (str_ends_with($route->uri, "delivery")) {
-                $status = 2;
-            } else if (str_ends_with($route->uri, "success")) {
-                $status = 3;
-            } else if (str_ends_with($route->uri, "return")) {
-                $status = 4;
-            } else if (str_ends_with($route->uri, "cancel")) {
-                $status = 5;
-            } else {
-                $status = -1;
+        if ($request->ids) {
+            foreach ($request->ids as $id) {
+                if (str_ends_with($route->uri, "confirm")) {
+                    $status = 1;
+                } else if (str_ends_with($route->uri, "delivery")) {
+                    $status = 2;
+                } else if (str_ends_with($route->uri, "success")) {
+                    $status = 3;
+                } else if (str_ends_with($route->uri, "return")) {
+                    $status = 4;
+                } else if (str_ends_with($route->uri, "cancel")) {
+                    $status = 5;
+                } else {
+                    $status = -1;
+                }
+                if (!$this->bill_service->updateStatus($id, $status)) {
+                    return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
+                }
             }
-            if ($this->bill_service->updateStatus($request->id, $status)) {
-                return JsonResponse::success(MessageResource::BILL_UPDATE_STATUS_SUCCESS);
-            }
+            return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::BILL_UPDATE_STATUS_SUCCESS);
         }
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }

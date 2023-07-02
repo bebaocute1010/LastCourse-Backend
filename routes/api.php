@@ -87,11 +87,11 @@ Route::prefix("comment")->controller(CommentController::class)->group(function (
 
 Route::prefix("bill")->controller(BillController::class)->middleware("auth:api")->group(function () {
     Route::post("create", "updateOrCreate");
-    Route::put("confirm", "updateStatus");
-    Route::put("delivery", "updateStatus");
-    Route::put("success", "updateStatus");
-    Route::put("return", "updateStatus");
-    Route::put("cancel", "updateStatus");
+    Route::post("confirm", "updateStatus");
+    Route::post("delivery", "updateStatus");
+    Route::post("success", "updateStatus");
+    Route::post("return", "updateStatus");
+    Route::post("cancel", "updateStatus");
 
     Route::get("get", "getBills");
     Route::get("details", "getBillDetails");
