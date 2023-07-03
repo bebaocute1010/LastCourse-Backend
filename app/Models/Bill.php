@@ -13,6 +13,8 @@ class Bill extends Model
 
     protected $guarded = [];
 
+    public const STATUS_SUCCESS = 3;
+
     public function products()
     {
         return $this->hasManyThrough(Product::class, BillDetail::class);

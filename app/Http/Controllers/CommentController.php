@@ -23,7 +23,7 @@ class CommentController extends Controller
     {
         $data_validated = $request->validated();
         if ($comment = $this->comment_service->updateOrCreate($data_validated, $id = $request->id)) {
-            return $comment;
+            return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::COMMENT_CREATE_SUCCESS);
         }
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }

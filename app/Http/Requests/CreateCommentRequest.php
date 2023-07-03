@@ -13,7 +13,7 @@ class CreateCommentRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return auth()->check();
     }
 
     /**
@@ -24,11 +24,12 @@ class CreateCommentRequest extends FormRequest
     public function rules()
     {
         return [
-            "product_id" => "required|exists:products,id",
+            "detail_id" => "required|exists:bill_details,id",
             "comment_id" => "nullable|exists:comments,id",
             "content" => "nullable|string|max:1000",
             "rating" => "required|integer|min:1|max:5",
             "images" => "nullable|array",
+            "images.*" => "required|image|max:2048"
         ];
     }
 }

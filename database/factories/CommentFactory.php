@@ -17,6 +17,7 @@ class CommentFactory extends Factory
     public function definition()
     {
         return [
+            "bill_id" => fake()->numberBetween(1, 1000),
             "product_id" => fake()->numberBetween(1, 100),
             "user_id" => fake()->numberBetween(1, 100),
             "image_ids" => [fake()->numberBetween(1, 100), fake()->numberBetween(1, 100), fake()->numberBetween(1, 100)],

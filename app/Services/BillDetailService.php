@@ -13,6 +13,11 @@ class BillDetailService
         $this->bill_detail_repository = new BillDetailRepository();
     }
 
+    public function find($id)
+    {
+        return $this->bill_detail_repository->find($id);
+    }
+
     public function createDetails($bill_id, $products)
     {
         $details = [];
