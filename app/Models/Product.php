@@ -17,6 +17,18 @@ class Product extends Model
     public const STATUS_AVAILABLE = "Còn hàng";
     public const STATUS_UNAVAILABLE = "Hết hàng";
 
+    public function filterVariants($color = null, $size = null)
+    {
+        return $this->variants()
+            ->when($color, function ($query) use ($color) {
+                return $query->where("color", $color);
+            })
+            ->when($size, function ($query) use ($size) {
+                return $query->where("size", $size);
+            })
+            ->get();
+    }
+
     public function filterRating($rating = null)
     {
         return $this->hasMany(Comment::class)

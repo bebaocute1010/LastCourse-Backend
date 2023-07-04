@@ -11,6 +11,17 @@ class CartRepository
         return Cart::whereIn("id", $ids)->get();
     }
 
+    public function find($id = null, $user_id = null, $product_id = null, $product_variant_id = null)
+    {
+        if ($id) {
+            return Cart::find($id);
+        }
+        if ($user_id && $product_id) {
+            return Cart::where("user_id", $user_id)->where("product_id", $product_id)->where("product_variant_id", $product_variant_id)->first();
+        }
+        return null;
+    }
+
     public function getCartsSelected(array $selected)
     {
         return Cart::whereIn("id", $selected)->with('product.shop')->get();

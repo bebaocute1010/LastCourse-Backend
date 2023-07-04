@@ -9,13 +9,12 @@ use App\Http\Resources\CompactProductResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\SearchProductResource;
 use App\Models\Product;
-use App\Models\ProductVariant;
 use App\Services\ProductService;
 use App\Utils\MessageResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -35,14 +34,32 @@ class ProductController extends Controller
         $this->discount_keys = [
             "discount_ranges_min",
             "discount_ranges_max",
-            "discount_ranges_amount"
+            "discount_ranges_amount",
         ];
     }
-    public function selectVariants(Request $request)
+    public function getVariantQuantity($slug, Request $request)
     {
-        // if ($product = $this->product_service->find($request->id)) {
-        //     return ProductVariant
-        // }
+        $variants = $this->product_service->findBySlug($slug)->filterVariants($request->color, $request->size) ?? null;
+        if ($variants) {
+            if ($request->color && !$request->size) {
+                $sum = $variants->groupBy("size")->map(function ($group) {
+                    $quantity = $group->sum("quantity");
+                    return ["name" => $group->first()->size, "quantity" => $quantity];
+                })->values()->sum("quantity");
+            } else {
+
+                $sum = $variants->groupBy("color")->map(function ($group) {
+                    $quantity = $group->sum("quantity");
+                    return ["name" => $group->first()->color, "quantity" => $quantity];
+                })->values()->sum("quantity");
+            }
+            $data = ["inventory" => $sum];
+            if ($variants->count() == 1) {
+                $data["product_variant_id"] = $variants->first()->id;
+            }
+            return JsonResponse::successWithData($data);
+        }
+        return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }
 
     public function getComments($slug, Request $request)

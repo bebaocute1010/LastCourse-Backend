@@ -29,7 +29,8 @@ class CreateBillRequest extends FormRequest
             "address" => "required|string|max:500",
             "cart_ids" => "required|array",
             "cart_ids.*" => "required|numeric|exists:carts,id",
-            "payment_method" => "required|numeric|in:0,1"
+            "note" => "nullable|string|max:1000",
+            "payment_method" => "required|numeric|in:0,1",
         ];
     }
 }

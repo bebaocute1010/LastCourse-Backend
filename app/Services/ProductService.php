@@ -74,7 +74,7 @@ class ProductService
 
     public function getDetails($slug)
     {
-        if ($product = $this->product_repository->findBySlug($slug)) {
+        if ($product = $this->product_repository->getDetails($slug)) {
             return $product;
         }
         return false;

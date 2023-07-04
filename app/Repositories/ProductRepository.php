@@ -92,6 +92,11 @@ class ProductRepository
         return Product::where("slug", $slug)->first();
     }
 
+    public function getDetails($slug)
+    {
+        return Product::with(['variants.colorImage', 'variants.sizeImage'])->where('slug', $slug)->first();
+    }
+
     public function updateOrCreate(array $data)
     {
         if (isset($data["id"])) {

@@ -51,7 +51,7 @@ Route::prefix("product")->controller(ProductController::class)->group(function (
         Route::delete("delete", "delete");
     });
 
-    Route::get("select-variants", "selectVariants");
+    Route::post("variant-quantity/{slug}", "getVariantQuantity");
     Route::get("details/{slug}", "getDetails");
     Route::get("comments/{slug}", "getComments");
 });

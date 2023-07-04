@@ -16,10 +16,10 @@ class ProductResource extends JsonResource
     {
         $variants = $this->variants;
         $colors = $variants->map(function ($variant) {
-            return ["color" => $variant->color, "image" => $variant->colorImage->url ?? null];
+            return ["name" => $variant->color, "image" => $variant->colorImage->url ?? null];
         });
         $sizes = $variants->map(function ($variant) {
-            return ["size" => $variant->size, "image" => $variant->sizeImage->url ?? null];
+            return ["name" => $variant->size, "image" => $variant->sizeImage->url ?? null];
         });
         $shop = $this->shop;
         $all_comments = $this->allComments;
@@ -33,9 +33,10 @@ class ProductResource extends JsonResource
             "price" => $this->price,
             "rating" => $this->rating,
             "sold" => $this->sold,
-            "colors" => $colors->unique("color"),
-            "sizes" => $sizes->unique("size"),
+            "colors" => $colors->unique("name"),
+            "sizes" => $sizes->unique("name"),
             "inventory" => $this->inventory,
+            "is_variant" => $this->is_variant ? true : null,
             "images" => $this->images()->pluck("url")->map(function ($url) {
                 return ["url" => $url];
             }),
@@ -47,14 +48,14 @@ class ProductResource extends JsonResource
                 "product_count" => $shop->allProducts->count(),
                 "rating" => $shop->rating,
                 "followers" => $shop->followers->count(),
-                "rating_count" => $shop_rating_count
+                "rating_count" => $shop_rating_count,
             ],
             "category" => $this->category->name,
             "address" => $this->warehouse->address,
             "detail" => str_replace("\n", "<br/>", $this->detail),
             "comments" => [
                 "num_page" => ceil($all_comments->count() / 6),
-                "comments" => CommentResource::collection($this->comments(1))
+                "comments" => CommentResource::collection($this->comments(1)),
             ],
             "relate_products" => CompactProductResource::collection($this->relates()),
             "rating_count" => [
@@ -64,7 +65,7 @@ class ProductResource extends JsonResource
                 "star_3" => $this->filterRating(3)->count(),
                 "star_4" => $this->filterRating(4)->count(),
                 "star_5" => $this->filterRating(5)->count(),
-            ]
+            ],
         ];
     }
 }

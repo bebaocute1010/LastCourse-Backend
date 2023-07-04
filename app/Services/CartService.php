@@ -36,6 +36,10 @@ class CartService
 
     public function create(array $data)
     {
+        if ($cart = $this->cart_repository->find(null, $data["user_id"], $data["product_id"], $data["product_variant_id"])) {
+            $quantity = $data["quantity"] + $cart->quantity;
+            return $this->update($cart->id, $quantity);
+        }
         return $this->cart_repository->create($data);
     }
 
