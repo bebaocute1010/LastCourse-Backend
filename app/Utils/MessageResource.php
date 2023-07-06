@@ -24,6 +24,8 @@ class MessageResource
     public const SHOP_UPDATE_SUCCESS = "Cập nhật thông tin shop thành công.";
     public const SHOP_DELETE_SUCCESS = "Xóa shop thành công.";
 
+    public const PRODUCT_HIDDEN_SUCCESS = "Ẩn sản phẩm thành công.";
+    public const PRODUCT_SHOW_SUCCESS = "Hiển thị sản phẩm thành công.";
     public const PRODUCT_CREATE_SUCCESS = "Thêm sản phẩm thành công.";
     public const PRODUCT_UPDATE_SUCCESS = "Cập nhật sản phẩm thành công.";
     public const PRODUCT_DELETE_SUCCESS = "Xóa sản phẩm thành công.";

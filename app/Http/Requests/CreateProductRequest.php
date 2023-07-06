@@ -40,13 +40,13 @@ class CreateProductRequest extends FormRequest
             "length" => "required|integer",
             "width" => "required|integer",
             "height" => "required|integer",
-            "variant_names" => "requiredWith:is_variant|array|min:1|max:2",
-            "variant_images" => "requiredWith:is_variant|array|min:1|max:2",
-            "variants_item_quantity" => "requiredWith:is_variant|array|min:1",
-            "variants_item_price" => "requiredWith:is_variant|array|min:1",
-            "discount_ranges_min" => "requiredWith:is_buy_more_discount|array|min:1|max:5",
-            "discount_ranges_max" => "requiredWith:is_buy_more_discount|array|min:1|max:5",
-            "discount_ranges_amount" => "requiredWith:is_buy_more_discount|array|min:1|max:5",
+            "variant_names" => "nullable|array|min:1|max:2",
+            "variant_images" => "nullable|array|min:1|max:2",
+            "variants_item_quantity" => "nullable|array|min:1",
+            "variants_item_price" => "nullable|array|min:1",
+            "discount_ranges_min" => "nullable|array|min:1|max:5",
+            "discount_ranges_max" => "nullable|array|min:1|max:5",
+            "discount_ranges_amount" => "nullable|array|min:1|max:5",
         ];
     }
 }

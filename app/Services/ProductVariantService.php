@@ -21,8 +21,10 @@ class ProductVariantService
     {
         $colors = $data["variant_names"][0] ?? null;
         $sizes = $data["variant_names"][1] ?? null;
-        $image_colors = $this->getArrayImages($data["variant_images"][0]);
-        $image_sizes = $this->getArrayImages($data["variant_images"][1]);
+        $image_colors = $this->getArrayImages($data["variant_images"][0] ?? null);
+        info($data["variant_images"][0]);
+        info($image_colors);
+        $image_sizes = $this->getArrayImages($data["variant_images"][1] ?? null);
         Arr::forget($data, "variant_images");
         Arr::forget($data, "variant_names");
         $data["image_colors"] = $image_colors;
@@ -39,8 +41,8 @@ class ProductVariantService
                     "color_image_id" => $data["image_colors"][$i] ?? null,
                     "size" => $data["sizes"][$j],
                     "size_image_id" => $data["image_sizes"][$j] ?? null,
-                    "quantity" => $data["variants_item_quantity"][$i][$j],
-                    "price" => $data["variants_item_price"][$i][$j],
+                    "quantity" => $data["variants_item_quantity"][$i][$j] ?? 0,
+                    "price" => $data["variants_item_price"][$i][$j] ?? 0,
                 ];
                 $variants[] = $this->product_variant_repository->create($data_create);
             }
@@ -48,16 +50,20 @@ class ProductVariantService
         return $variants;
     }
 
-    private function getArrayImages($images)
+    private function getArrayImages(array $images = null)
     {
         $image_ids = [];
-        for ($i = 0; $i <= max(array_keys($images)); $i++) {
-            if (isset($images[$i])) {
-                if ($image = $this->uploader->upload($images[$i])) {
-                    $image_ids[$i] = $image->id;
-                } else {
-                    info("upload eror");
-                    continue;
+        if ($images) {
+            for ($i = 0; $i <= max(array_keys($images)); $i++) {
+                if (isset($images[$i])) {
+                    if (gettype($images[$i]) == "string") {
+                        $image_ids[$i] = $this->uploader->getIdImage($images[$i]);
+                    } else if ($image = $this->uploader->upload($images[$i])) {
+                        $image_ids[$i] = $image->id;
+                    } else {
+                        info("upload eror");
+                        continue;
+                    }
                 }
             }
         }

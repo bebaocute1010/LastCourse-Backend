@@ -13,6 +13,7 @@ use App\Services\ProductService;
 use App\Utils\MessageResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -37,6 +38,31 @@ class ProductController extends Controller
             "discount_ranges_amount",
         ];
     }
+
+    public function showOrHiddenProducts(Request $request, Route $route)
+    {
+        if (str_ends_with($route->uri, "hidden")) {
+            $type = 0;
+        } else if (str_ends_with($route->uri, "show")) {
+            $type = 1;
+        } else {
+            $type = 2;
+        }
+        if ($request->ids && $type != 2) {
+            foreach ($request->ids as $id) {
+                if ($product = $this->product_service->find($id)) {
+                    if ($product->shop_id == auth()->user()->shop->id) {
+                        $product->is_hidden = $type == 0 ? 1 : null;
+                        $product->update();
+                    }
+                }
+            }
+            $message = $type == 0 ? MessageResource::PRODUCT_HIDDEN_SUCCESS : MessageResource::PRODUCT_SHOW_SUCCESS;
+            return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, $message);
+        }
+        return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
+    }
+
     public function getVariantQuantity($slug, Request $request)
     {
         $variants = $this->product_service->findBySlug($slug)->filterVariants($request->color, $request->size) ?? null;
@@ -115,7 +141,7 @@ class ProductController extends Controller
 
     public function delete(Request $request)
     {
-        if ($request->id && $this->product_service->delete($request->id)) {
+    if ($request->id && $this->product_service->delete($request->id)) {
             return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::PRODUCT_DELETE_SUCCESS);
         }
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);

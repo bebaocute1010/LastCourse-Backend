@@ -49,6 +49,9 @@ Route::prefix("product")->controller(ProductController::class)->group(function (
         Route::post("create", "updateOrCreate");
         Route::post("update", "updateOrCreate");
         Route::delete("delete", "delete");
+
+        Route::post("hidden", "showOrHiddenProducts");
+        Route::post("show", "showOrHiddenProducts");
     });
 
     Route::post("variant-quantity/{slug}", "getVariantQuantity");
@@ -65,7 +68,6 @@ Route::prefix("shop")->controller(ShopController::class)->middleware("auth:api")
         Route::get("infor", "getInforShop");
         Route::get("bills", "getBills");
         Route::get("get-product", "getProduct");
-        Route::get("products", "getProducts");
         Route::get("products", "getProducts");
     });
 });

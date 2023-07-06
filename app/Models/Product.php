@@ -17,6 +17,11 @@ class Product extends Model
     public const STATUS_AVAILABLE = "Còn hàng";
     public const STATUS_UNAVAILABLE = "Hết hàng";
 
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
     public function filterVariants($color = null, $size = null)
     {
         return $this->variants()
