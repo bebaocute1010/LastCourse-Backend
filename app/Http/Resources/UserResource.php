@@ -16,10 +16,10 @@ class UserResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "name" => $this->fullname,
+            "fullname" => $this->fullname,
             "birthday" => $this->birthday,
             "avatar" => $this->avatar()->url,
-            "gender" => $this->gender == 0 ? "Nam" : ($this->gender == 1 ? "Nữ" : "Không xác định"),
+            "gender" => $this->gender,
             "invite_code" => $this->invite_code,
             
         ];
