@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Repositories\ProductRepository;
 use App\Repositories\ShopRepository;
 use App\Utils\Uploader;
+use Illuminate\Support\Arr;
 
 class ShopService
 {
@@ -28,19 +28,23 @@ class ShopService
         if (!$shop || $shop->user_id != $data["user_id"]) {
             return false;
         }
-        if (isset($data["avatar"])) {
+        if (gettype($data["avatar"]) != "string") {
             $data["avatar"] = $this->uploader->upload($data["avatar"], $shop->avatar)->id;
+        } else {
+            Arr::forget($data, "avatar");
+        }
+        if (gettype($data["banner"]) != "string") {
+            $data["banner"] = $this->uploader->upload($data["banner"], $shop->banner)->id;
+        } else {
+            Arr::forget($data, "banner");
         }
         return $this->shop_repository->update($id, $data);
     }
 
     public function create(array $data)
     {
-        if (isset($data["avatar"])) {
-            $data["avatar"] = $this->uploader->upload($data["avatar"])->id;
-        } else {
-            $data["avatar"] = $this->uploader->getDefaultAvatar();
-        }
+        $data["avatar"] = $this->uploader->upload($data["avatar"])->id;
+        $data["banner"] = $this->uploader->upload($data["banner"])->id;
         return $this->shop_repository->create($data);
     }
 

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BillController;
+use App\Http\Controllers\CarrierController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
@@ -16,6 +17,7 @@ Route::prefix("get")->group(function () {
         Route::get("level1", "getCategoriesLevel1");
         Route::get("level2", "getCategoriesLevel2");
     });
+    Route::get("carriers", [CarrierController::class, "getCarriers"]);
 
     Route::get("conditions", [ProductConditionController::class, "getConditions"]);
 
@@ -34,6 +36,7 @@ Route::prefix("get")->group(function () {
 Route::prefix("auth")->controller(AuthController::class)->group(function () {
     Route::middleware("auth")->group(function () {
         Route::post("change-password", "changePassword");
+        Route::post("update-profile", "updateProfile");
         Route::get("me", "me");
     });
 

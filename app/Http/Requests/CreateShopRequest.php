@@ -24,8 +24,11 @@ class CreateShopRequest extends FormRequest
     public function rules()
     {
         return [
+            "carrier_id" => "required|string|exists:carriers,id",
             "name" => "required|string|max:50",
-            "avatar" => "nullable|image|max:2048",
+            "locate" => "required|string|max:255",
+            "avatar" => "required",
+            "banner" => "required",
         ];
     }
 }
