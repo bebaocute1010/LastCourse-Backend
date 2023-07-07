@@ -15,6 +15,16 @@ class Bill extends Model
 
     public const STATUS_SUCCESS = 3;
 
+    public function shop()
+    {
+        return $this->belongsTo(Shop::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function products()
     {
         return $this->hasManyThrough(Product::class, BillDetail::class);
