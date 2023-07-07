@@ -21,8 +21,26 @@ class ProductOrderResource extends JsonResource
         return [
             "image" => $product->firstImage->url,
             "name" => $product->name,
-            "price" => $this->product_variant_id === null ? $product->price : $this->variant->price,
-            "quantity" => $this->quantity
+            "price" => $this->getPrice($product, $this->variant, $this->quantity),
+            "quantity" => $this->quantity,
         ];
+    }
+
+    public function getPrice($product, $variant, $quantity)
+    {
+        $price = $product->price;
+        if ($variant != null) {
+            $price = $variant->price;
+        }
+        if ($product->is_buy_more_discount) {
+            $discount_ranges = $product->discountRanges;
+            foreach ($discount_ranges as $discount) {
+                if ($quantity >= $discount->min && $quantity < $discount->max) {
+                    $price -= $discount->amount;
+                    break;
+                }
+            }
+        }
+        return $price;
     }
 }
