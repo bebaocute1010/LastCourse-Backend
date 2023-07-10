@@ -46,7 +46,7 @@ class Uploader
         $filename = $image->store(Image::DIR_PATH);
         $url = config("app.url") . Storage::url($filename);
         $data = [];
-        if ($id) {
+        if ($id && $id > 22) {
             $data = Arr::add($data, "id", $id);
         }
         $data = Arr::add($data, "url", $url);

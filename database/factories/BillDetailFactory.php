@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Bill;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,10 +18,12 @@ class BillDetailFactory extends Factory
      */
     public function definition()
     {
+        // $bill_ids = Bill::all()->pluck("id")->toArray();
+        // $product_ids = Product::all()->pluck("id")->toArray();
         return [
             "bill_id" => fake()->numberBetween(1,1000),
-            "product_id" => fake()->numberBetween(1,500),
-            "quantity" => fake()->numberBetween(1,50),
+            "product_id" => fake()->numberBetween(1, 320),
+            "quantity" => fake()->numberBetween(1, 50),
             "price" => fake()->numberBetween(10000, 30000000),
         ];
     }
