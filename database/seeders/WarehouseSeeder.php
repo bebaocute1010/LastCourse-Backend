@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Warehouse;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class WarehouseSeeder extends Seeder
@@ -15,7 +14,7 @@ class WarehouseSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 100; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
             Warehouse::updateOrCreate([
                 "shop_id" => $i,
                 "name" => "Warehouse " . $i,
