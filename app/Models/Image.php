@@ -16,4 +16,5 @@ class Image extends Model
     public const DIR_PATH = "public/uploads/images";
 
     public const DEFAULT_AVATAR_ID = 1;
+    public const DEFAULT_BANNER_ID = 2;
 }
