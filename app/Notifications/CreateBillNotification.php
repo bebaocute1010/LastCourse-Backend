@@ -67,7 +67,7 @@ class CreateBillNotification extends Notification implements ShouldQueue
         $this->is_shop = $notifiable->user_id != null;
         return [
             "title" => $this->is_shop ? "Đơn hàng mới" : "Tạo đơn hàng",
-            "content" => $this->is_shop ?
+            "message" => $this->is_shop ?
             "Bạn có đơn hàng mới, mã đơn hàng #" . $this->bill->code . "."
             : "Bạn đã tạo thành công đơn hàng #" . $this->bill->code . ".",
         ];
