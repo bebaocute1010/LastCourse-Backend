@@ -70,37 +70,27 @@ class UpdateStatusBillNotification extends Notification implements ShouldQueue
 
     private function getMessages(): array
     {
+        $data = ["Đơn hàng #" . $this->bill->code];
         switch ($this->bill->status) {
             case 1:
-                return [
-                    "Xác nhận đơn hàng",
-                    $this->is_shop ?
-                    "Bạn đã xác nhận đơn hàng. Hãy chuẩn bị sớm để giao cho khách hàng nhé !"
-                    : "Đơn hàng đã được người bán xác nhận. Đơn hàng sẽ được người bán chuẩn bị và sớm giao tới bạn.",
-                ];
+                $data[] = $this->is_shop ? "Bạn đã xác nhận đơn hàng. Hãy chuẩn bị sớm để giao cho khách hàng nhé !"
+                : "Đơn hàng đã được người bán xác nhận. Đơn hàng sẽ được người bán chuẩn bị và sớm giao tới bạn.";
+                break;
             case 2:
-                return [
-                    "Đơn hàng đang được giao",
-                    $this->is_shop ? "Đơn hàng đang được giao cho khách hàng." : "Đơn hàng của bạn đang trên đường giao.",
-                ];
+                $data[] = $this->is_shop ? "Đơn hàng đang được giao cho khách hàng." : "Đơn hàng của bạn đang trên đường giao.";
+                break;
             case 3:
-                return [
-                    "Đơn hàng thành công",
-                    $this->is_shop ? "Đơn hàng đã giao thành công." : "Giao hàng thành công.",
-                ];
-
+                $data[] = $this->is_shop ? "Đơn hàng đã giao thành công." : "Giao hàng thành công.";
+                break;
             case 4:
-                return [
-                    "Đơn hàng được hoàn",
-                    $this->is_shop ? "Đơn hàng được hoàn từ khách hàng." : "Hoàn hàng thành công.",
-                ];
+                $data[] = $this->is_shop ? "Đơn hàng được hoàn từ khách hàng." : "Hoàn hàng thành công.";
+                break;
             case 5:
-                return [
-                    "Đơn hàng đã bị hủy",
-                    "Đơn hàng đã bị hủy",
-                ];
+                $data[] = "Đơn hàng đã bị hủy";
+                break;
             default:
-                return ["-", "-"];
+                $data[] = "-";
         }
+        return $data;
     }
 }
