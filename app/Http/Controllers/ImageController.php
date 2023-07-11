@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Services\ImageService;
-use Illuminate\Http\Request;
 
 class ImageController extends Controller
 {
@@ -13,6 +12,11 @@ class ImageController extends Controller
     public function __construct()
     {
         $this->image_service = new ImageService();
+    }
+
+    public function findUrl($url = null)
+    {
+        return $this->image_service->findUrl($url);
     }
 
     public function updateOrCreate(array $data)

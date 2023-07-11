@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateShopRequest extends FormRequest
+class UpdateProfileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,11 +24,10 @@ class CreateShopRequest extends FormRequest
     public function rules()
     {
         return [
-            "carrier_id" => "required|string|exists:carriers,id",
-            "name" => "required|string|max:50",
-            "locate" => "required|string|max:255",
-            "avatar" => "required",
-            "banner" => "required",
+            "fullname" => "required|string|max:255",
+            "avatar" => "nullable|image|max:2048",
+            "birthday" => "required|date",
+            "gender" => "required|numeric",
         ];
     }
 }

@@ -27,7 +27,7 @@ class ShopRepository
     {
         $totalRating = 0;
         $ratingCount = 0;
-        $products = $shop->products;
+        $products = $shop->allProducts;
         foreach ($products as $product) {
             $totalRating += $product->getTotalRating();
             $ratingCount += $product->evaluateComments()->count();

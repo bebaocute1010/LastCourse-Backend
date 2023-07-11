@@ -23,6 +23,11 @@ class ProductService
         $this->uploader = new Uploader();
     }
 
+    public function findBySlug(string $slug)
+    {
+        return $this->product_repository->findBySlug($slug);
+    }
+
     public function searchProducts(
         string $search,
         $page,
@@ -69,7 +74,7 @@ class ProductService
 
     public function getDetails($slug)
     {
-        if ($product = $this->product_repository->findBySlug($slug)) {
+        if ($product = $this->product_repository->getDetails($slug)) {
             return $product;
         }
         return false;
@@ -112,6 +117,9 @@ class ProductService
             foreach ($product->images() as $image) {
                 $image->delete();
             }
+            foreach ($product->carts as $cart) {
+                $cart->delete();
+            }
             return $product->delete();
         }
         return true;
@@ -119,25 +127,37 @@ class ProductService
 
     public function updateOrCreate(array $data, array $variant_keys, array $discount_keys)
     {
+        if (isset($data["id"])) {
+            $product = $this->find($data["id"]);
+        } else {
+            $product = null;
+        }
         if (Arr::exists($data, "images")) {
             $data = Arr::add($data, "image_ids", $this->uploader->getImageIds($data["images"]));
             Arr::forget($data, "images");
         }
 
-        if (Arr::exists($data, "id") && $product = $this->find($data["id"])) {
+        if (Arr::exists($data, "id") && $product) {
             if ($product->shop_id != $data["shop_id"]) {
                 return false;
             }
             $old_image_ids = $product->image_ids;
-            foreach ($old_image_ids as $id) {
-                $this->uploader->delete($id);
-            }
-            foreach ($product->variants as $variant) {
-                if ($variant->color_image_id) {
-                    $this->uploader->delete($variant->color_image_id);
+            foreach ($old_image_ids as $key => $id) {
+                if (!in_array($id, $data["image_ids"])) {
+                    info("images: " . $id);
+                    $this->uploader->delete($id);
                 }
-                if ($variant->size_image_id) {
+            }
+            $color_image_ids = $this->findImageIds($data["variant_images"][0]);
+            $size_image_ids = $this->findImageIds($data["variant_images"][1]);
+            foreach ($product->variants as $key => $variant) {
+                if (!in_array($variant->color_image_id, $color_image_ids)) {
+                    $this->uploader->delete($variant->color_image_id);
+                    info("0:" . $key);
+                }
+                if (!in_array($variant->size_image_id, $size_image_ids)) {
                     $this->uploader->delete($variant->size_image_id);
+                    info("1:" . $key);
                 }
                 $variant->forceDelete();
             }
@@ -174,6 +194,21 @@ class ProductService
                 );
             }
         }
+        foreach ($product->variants as $variant) {
+            $product->inventory += $variant->quantity;
+        }
+        $product->save();
         return $product;
+    }
+
+    public function findImageIds(array $urls)
+    {
+        $image_ids = [];
+        foreach ($urls as $url) {
+            if ($id = $this->uploader->getIdImage($url)) {
+                $image_ids[] = $id;
+            }
+        }
+        return $image_ids;
     }
 }

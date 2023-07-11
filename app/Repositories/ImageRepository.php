@@ -6,6 +6,11 @@ use App\Models\Image;
 
 class ImageRepository
 {
+    public function findUrl($url)
+    {
+        return Image::where("url", $url)->first();
+    }
+
     public function find($id)
     {
         return Image::find($id);

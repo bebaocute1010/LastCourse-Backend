@@ -62,7 +62,6 @@ class ProductRepository
                     ->whereIn("id", $cat_ids)
                     ->orWhereIn("parent_id", $cat_ids);
             })
-                ->skip(($page - 1) * $per_page)
                 ->orderByDesc("sold")
                 ->get();
         }
@@ -91,6 +90,11 @@ class ProductRepository
     public function findBySlug($slug)
     {
         return Product::where("slug", $slug)->first();
+    }
+
+    public function getDetails($slug)
+    {
+        return Product::with(['variants.colorImage', 'variants.sizeImage'])->where('slug', $slug)->first();
     }
 
     public function updateOrCreate(array $data)

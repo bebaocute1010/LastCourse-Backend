@@ -26,6 +26,7 @@ class BillFactory extends Factory
             "shipping_fee" => fake()->numberBetween(10000, 30000),
             "status" => fake()->numberBetween(1, 5),
             "total" => fake()->numberBetween(1000, 20000000),
+            "payment_method" => fake()->numberBetween(0, 1),
         ];
     }
 }

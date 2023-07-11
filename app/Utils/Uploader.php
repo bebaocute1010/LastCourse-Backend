@@ -16,6 +16,11 @@ class Uploader
         $this->image_ctl = new ImageController();
     }
 
+    public function getIdImage($url = null)
+    {
+        return $this->image_ctl->findUrl($url)->id ?? null;
+    }
+
     public function getDefaultAvatar()
     {
         return Image::DEFAULT_AVATAR_ID;
@@ -35,6 +40,9 @@ class Uploader
 
     public function upload($image, $id = null)
     {
+        if (gettype($image) == "string") {
+            return $this->image_ctl->findUrl($image);
+        }
         $filename = $image->store(Image::DIR_PATH);
         $url = config("app.url") . Storage::url($filename);
         $data = [];

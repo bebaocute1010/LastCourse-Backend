@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateProductRequest;
+use App\Http\Resources\CommentResource;
 use App\Http\Resources\CompactProductResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\SearchProductResource;
@@ -11,9 +12,10 @@ use App\Models\Product;
 use App\Services\ProductService;
 use App\Utils\MessageResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -33,8 +35,66 @@ class ProductController extends Controller
         $this->discount_keys = [
             "discount_ranges_min",
             "discount_ranges_max",
-            "discount_ranges_amount"
+            "discount_ranges_amount",
         ];
+    }
+
+    public function showOrHiddenProducts(Request $request, Route $route)
+    {
+        if (str_ends_with($route->uri, "hidden")) {
+            $type = 0;
+        } else if (str_ends_with($route->uri, "show")) {
+            $type = 1;
+        } else {
+            $type = 2;
+        }
+        if ($request->ids && $type != 2) {
+            foreach ($request->ids as $id) {
+                if ($product = $this->product_service->find($id)) {
+                    if ($product->shop_id == auth()->user()->shop->id) {
+                        $product->is_hidden = $type == 0 ? 1 : null;
+                        $product->update();
+                    }
+                }
+            }
+            $message = $type == 0 ? MessageResource::PRODUCT_HIDDEN_SUCCESS : MessageResource::PRODUCT_SHOW_SUCCESS;
+            return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, $message);
+        }
+        return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
+    }
+
+    public function getVariantQuantity($slug, Request $request)
+    {
+        $variants = $this->product_service->findBySlug($slug)->filterVariants($request->color, $request->size) ?? null;
+        if ($variants) {
+            if ($request->color && !$request->size) {
+                $sum = $variants->groupBy("size")->map(function ($group) {
+                    $quantity = $group->sum("quantity");
+                    return ["name" => $group->first()->size, "quantity" => $quantity];
+                })->values()->sum("quantity");
+            } else {
+
+                $sum = $variants->groupBy("color")->map(function ($group) {
+                    $quantity = $group->sum("quantity");
+                    return ["name" => $group->first()->color, "quantity" => $quantity];
+                })->values()->sum("quantity");
+            }
+            $data = ["inventory" => $sum];
+            if ($variants->count() == 1) {
+                $data["product_variant_id"] = $variants->first()->id;
+            }
+            return JsonResponse::successWithData($data);
+        }
+        return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
+    }
+
+    public function getComments($slug, Request $request)
+    {
+
+        if ($product = $this->product_service->findBySlug($slug)) {
+            return CommentResource::collection($product->comments($request->page));
+        }
+        return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }
 
     public function searchProducts(Request $request)
@@ -49,7 +109,7 @@ class ProductController extends Controller
                 $request->filter_rating ?? null,
                 $request->sort_newest ?? false,
                 $request->sort_sell ?? false,
-                $request->sort_desc_price == 1 ? true : false,
+                $request->sort_desc_price ?? null,
             )
         );
     }
@@ -81,7 +141,7 @@ class ProductController extends Controller
 
     public function delete(Request $request)
     {
-        if ($request->id && $this->product_service->delete($request->id)) {
+    if ($request->id && $this->product_service->delete($request->id)) {
             return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::PRODUCT_DELETE_SUCCESS);
         }
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
@@ -90,7 +150,12 @@ class ProductController extends Controller
     public function updateOrCreate(CreateProductRequest $request)
     {
         $data_validated = $request->validated();
-        $data_validated["shop_id"] = auth()->user()->shop->id;
+        $shop = auth()->user()->shop;
+        $data_validated = array_merge($data_validated, [
+            "shop_id" => $shop->id,
+            "warehouse_id" => $shop->warehouse->id,
+            "slug" => $this->createSlug($data_validated["name"]),
+        ]);
         if ($request->id) {
             $data_validated["id"] = $request->id;
         }
@@ -101,7 +166,6 @@ class ProductController extends Controller
             $data_validated = Arr::except($data_validated, $this->discount_keys);
         }
 
-        $data_validated += ["slug" => $this->createSlug($data_validated["name"])];
         if ($this->product_service->updateOrCreate($data_validated, $this->variant_keys, $this->discount_keys)) {
             if ($request->id) {
                 return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::PRODUCT_UPDATE_SUCCESS);

@@ -15,6 +15,11 @@ class ImageService
         $this->image_repo = new ImageRepository();
     }
 
+    public function findUrl($url)
+    {
+        return $this->image_repo->findUrl($url);
+    }
+
     public function updateOrCreate(array $data)
     {
         if (Arr::exists($data, "id")) {

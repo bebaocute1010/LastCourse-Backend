@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\BillDetail>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Cart>
  */
-class BillDetailFactory extends Factory
+class CartFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,10 +17,9 @@ class BillDetailFactory extends Factory
     public function definition()
     {
         return [
-            "bill_id" => fake()->numberBetween(1,1000),
+            "user_id" => fake()->numberBetween(10,20),
             "product_id" => fake()->numberBetween(1,500),
-            "quantity" => fake()->numberBetween(1,50),
-            "price" => fake()->numberBetween(10000, 30000000),
+            "quantity" => fake()->numberBetween(0,100),
         ];
     }
 }

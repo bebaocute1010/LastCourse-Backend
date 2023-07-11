@@ -2,24 +2,32 @@
 
 namespace App\Services;
 
-use App\Jobs\OtpMailJob;
-use App\Mail\OtpMail;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Utils\Uploader;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class AuthService
 {
     private $user_repository;
     private $otp_service;
+    private $uploader;
 
     public function __construct()
     {
         $this->user_repository = new UserRepository();
         $this->otp_service = new OtpService();
+        $this->uploader = new Uploader();
+    }
+
+    public function updateProfile(array $data)
+    {
+        if (isset($data["avatar"])) {
+            $data["avatar"] = $this->uploader->upload($data["avatar"])->id;
+        }
+        return $this->user_repository->updateProfile(auth()->id(), $data);
     }
 
     public function changePassword($newpass)

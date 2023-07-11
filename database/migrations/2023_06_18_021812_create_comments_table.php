@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('bill_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('comment_id')->nullable();
             $table->json('image_ids');

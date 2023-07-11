@@ -2,17 +2,24 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BillController;
+use App\Http\Controllers\CarrierController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ProductConditionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("get")->group(function () {
-    Route::controller(CategoryController::class)->group(function () {
-        Route::get("categories", "getCategories");
+    Route::controller(CategoryController::class)->prefix("category")->group(function () {
+        Route::get("search", "searchCategories");
+        Route::get("level1", "getCategoriesLevel1");
+        Route::get("level2", "getCategoriesLevel2");
     });
+    Route::get("carriers", [CarrierController::class, "getCarriers"]);
+
+    Route::get("conditions", [ProductConditionController::class, "getConditions"]);
 
     Route::controller(ProductController::class)->group(function () {
         Route::any("search-products", "searchProducts");
@@ -20,11 +27,16 @@ Route::prefix("get")->group(function () {
         Route::get("top-selling-products", "getTopSellingProducts");
         Route::get("recommended-products", "getRecommendedProducts");
     });
+
+    Route::controller(ShopController::class)->group(function () {
+        Route::get("shop/{id}", "getShopProfile");
+    });
 });
 
 Route::prefix("auth")->controller(AuthController::class)->group(function () {
     Route::middleware("auth")->group(function () {
         Route::post("change-password", "changePassword");
+        Route::post("update-profile", "updateProfile");
         Route::get("me", "me");
     });
 
@@ -40,9 +52,14 @@ Route::prefix("product")->controller(ProductController::class)->group(function (
         Route::post("create", "updateOrCreate");
         Route::post("update", "updateOrCreate");
         Route::delete("delete", "delete");
+
+        Route::post("hidden", "showOrHiddenProducts");
+        Route::post("show", "showOrHiddenProducts");
     });
 
+    Route::post("variant-quantity/{slug}", "getVariantQuantity");
     Route::get("details/{slug}", "getDetails");
+    Route::get("comments/{slug}", "getComments");
 });
 
 Route::prefix("shop")->controller(ShopController::class)->middleware("auth:api")->group(function () {
@@ -62,6 +79,8 @@ Route::prefix("cart")->controller(CartController::class)->middleware("auth:api")
     Route::post("create", "updateOrCreate");
     Route::post("update", "updateOrCreate");
     Route::delete("delete", "delete");
+
+    Route::post("preview-order", "previewOrder");
     Route::get("get", "getProducts");
 });
 
@@ -73,11 +92,11 @@ Route::prefix("comment")->controller(CommentController::class)->group(function (
 
 Route::prefix("bill")->controller(BillController::class)->middleware("auth:api")->group(function () {
     Route::post("create", "updateOrCreate");
-    Route::put("confirm", "updateStatus");
-    Route::put("delivery", "updateStatus");
-    Route::put("success", "updateStatus");
-    Route::put("return", "updateStatus");
-    Route::put("cancel", "updateStatus");
+    Route::post("confirm", "updateStatus");
+    Route::post("delivery", "updateStatus");
+    Route::post("success", "updateStatus");
+    Route::post("return", "updateStatus");
+    Route::post("cancel", "updateStatus");
 
     Route::get("get", "getBills");
     Route::get("details", "getBillDetails");

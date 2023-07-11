@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ShopInforResource extends JsonResource
+class ShopProfileResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,13 +14,16 @@ class ShopInforResource extends JsonResource
      */
     public function toArray($request)
     {
+        $products_count = $this->allProducts->count();
         return [
-            "id" => $this->id,
             "name" => $this->name,
             "avatar" => $this->avatar()->url,
             "banner" => $this->banner()->url,
-            "locate" => $this->locate,
-            "carrier_id" => $this->carrier_id,
+            "followers" => $this->followers->count(),
+            "rating" => $this->rating,
+            "products_count" => $products_count,
+            "num_page" => ceil($products_count / 24),
+            "products" => CompactProductResource::collection($this->products()),
         ];
     }
 }

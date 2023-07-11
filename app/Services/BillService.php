@@ -12,6 +12,7 @@ class BillService
     private $carrier_repository;
     private $product_service;
     private $bill_detail_service;
+    private $cart_service;
 
     public function __construct()
     {
@@ -19,6 +20,7 @@ class BillService
         $this->carrier_repository = new CarrierRepository();
         $this->product_service = new ProductService();
         $this->bill_detail_service = new BillDetailService();
+        $this->cart_service = new CartService();
     }
 
     public function find($id)
@@ -33,11 +35,26 @@ class BillService
 
     public function updateOrCreate(array $data, $id = null)
     {
-        $products = collect($data["products"]);
-        Arr::forget($data, "products");
-        $data["user_id"] = auth()->id(); // Sau nay thay la auth()->id()
-        $data["shipping_fee"] = $this->getShippingFee($data["carrier_id"], $products->pluck("id")->toArray());
-
+        $carts = $this->cart_service->findCarts($data["cart_ids"]);
+        $shop = $carts->first()->product->shop;
+        $products = $carts->map(function ($cart) {
+            return [
+                "id" => $cart->product_id,
+                "variant_id" => $cart->product_variant_id,
+                "quantity" => $cart->quantity,
+                "price" => $cart->product->price,
+            ];
+        });
+        $data = array_merge($data, [
+            "shop_id" => $shop->id,
+            "carrier_id" => $shop->carrier_id,
+            "user_id" => auth()->id(),
+            "shipping_fee" => self::getShippingFee($shop->carrier_id, $products->pluck("id")),
+        ]);
+        foreach ($carts as $cart) {
+            $cart->delete();
+        }
+        Arr::forget($data, "cart_ids");
         if (!$id) {
             $bill = $this->bill_repository->create($data);
         } else {
@@ -54,18 +71,18 @@ class BillService
         return $bill;
     }
 
-    public function getShippingFee($carrier_id, $product_ids)
+    public static function getShippingFee($carrier_id, $product_ids)
     {
-        $carrier = $this->carrier_repository->find($carrier_id);
+        $billsv = new BillService();
+        $carrier = $billsv->carrier_repository->find($carrier_id);
         $total = 0;
-        $coefficient = rand(110, 200) / 100;
         foreach ($product_ids as $product_id) {
-            if ($product = $this->product_service->find($product_id)) {
+            if ($product = $billsv->product_service->find($product_id)) {
                 $total += $product->getShippingFee();
             }
         }
 
         // gia ship co ban * tong ship cac san pham * he so random
-        return round($carrier->price *  (1 + $total) * $coefficient);
+        return intval(round($carrier->price *  (1 + $total)));
     }
 }

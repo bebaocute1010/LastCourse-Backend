@@ -7,16 +7,17 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterInformationRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\SendOtpRequest;
+use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\VerifyAccountRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\AuthService;
 use App\Utils\MessageResource;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
@@ -26,6 +27,15 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->auth_service = new AuthService();
+    }
+
+    public function updateProfile(UpdateProfileRequest $request)
+    {
+        $data_validated = $request->validated();
+        if ($this->auth_service->updateProfile($data_validated)) {
+            return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::USER_PROFILE_UPDATE_SUCCESS);
+        }
+        return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }
 
     public function login(LoginRequest $request)
@@ -61,7 +71,11 @@ class AuthController extends Controller
         $data_validated = $request->validated();
         if (Hash::check($data_validated["password"], auth()->user()->password)) {
             $this->auth_service->changePassword($data_validated["new_password"]);
-            return $this->refresh();
+            $response = array_merge($this->refresh(), [
+                "title" => MessageResource::DEFAULT_SUCCESS_TITLE,
+                "message" => MessageResource::CHANGE_PASSWORD_SUCCESS,
+            ]);
+            return JsonResponse::successWithData($response);
         }
         return JsonResponse::error(MessageResource::AUTH_PASSWORD_NOT_CORRECT, JsonResponse::HTTP_NON_AUTHORITATIVE_INFORMATION);
     }
@@ -154,8 +168,6 @@ class AuthController extends Controller
 
     public function refresh()
     {
-        return JsonResponse::successWithData(
-            JsonResponse::makeTokenData(auth()->refresh())
-        );
+        return JsonResponse::makeTokenData(auth()->refresh());
     }
 }

@@ -7,14 +7,15 @@ namespace Database\Seeders;
 use App\Models\Bill;
 use App\Models\BillDetail;
 use App\Models\Carrier;
+use App\Models\Cart;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Image;
 use App\Models\Product;
 use App\Models\ProductCondition;
 use App\Models\ProductVariant;
 use App\Models\Shop;
 use App\Models\User;
-use App\Models\Warehouse;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -27,15 +28,17 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(ShopSeeder::class);
+        $this->call(WarehouseSeeder::class);
         ProductCondition::factory(20)->create();
         Image::factory(200)->create();
         User::factory(100)->create();
-        Warehouse::factory(100)->create();
-        Product::factory(5000)->create();
+        Product::factory(500)->create();
         Carrier::factory(100)->create();
-        Bill::factory(10000)->create();
-        BillDetail::factory(50000)->create();
-        ProductVariant::factory(20000)->create();
+        Bill::factory(1000)->create();
+        BillDetail::factory(5000)->create();
+        ProductVariant::factory(2000)->create();
         Category::factory(100)->create();
+        Cart::factory(1000)->create();
+        Comment::factory(1000)->create();
     }
 }
