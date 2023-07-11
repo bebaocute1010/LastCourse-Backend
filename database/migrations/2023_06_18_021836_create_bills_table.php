@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('bills', function (Blueprint $table) {
             $table->id();
+            $table->string("code", 16)->unique();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('shop_id');
             $table->unsignedBigInteger('carrier_id');

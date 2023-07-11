@@ -26,6 +26,7 @@ class CreateShopRequest extends FormRequest
         return [
             "carrier_id" => "required|string|exists:carriers,id",
             "name" => "required|string|max:50",
+            "email" => "required|email|max:255",
             "locate" => "required|string|max:255",
             "avatar" => "required",
             "banner" => "required",

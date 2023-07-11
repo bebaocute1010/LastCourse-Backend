@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Notifications\CreateBillNotification;
+use App\Notifications\UpdateStatusBillNotification;
 use App\Repositories\BillRepository;
 use App\Repositories\CarrierRepository;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class BillService
 {
@@ -30,7 +33,10 @@ class BillService
 
     public function updateStatus($id, $status)
     {
-        return $this->bill_repository->updateStatus($id, $status);
+        $bill = $this->bill_repository->updateStatus($id, $status);
+        $bill->user->notify(new UpdateStatusBillNotification($bill));
+        $bill->shop->notify(new UpdateStatusBillNotification($bill, true));
+        return $bill;
     }
 
     public function updateOrCreate(array $data, $id = null)
@@ -55,19 +61,27 @@ class BillService
             $cart->delete();
         }
         Arr::forget($data, "cart_ids");
-        if (!$id) {
-            $bill = $this->bill_repository->create($data);
-        } else {
-            $bill = $this->bill_repository->find($id);
-            $bill->details->forceDelete();
-            $bill->update($data);
-        }
+        $data["code"] = Str::upper(Str::random(16));
+        $bill = $this->bill_repository->create($data);
         $details = $this->bill_detail_service->createDetails($bill->id, $products);
+        foreach ($details as $detail) {
+            if ($variant = $detail->variant) {
+                $variant->quantity -= $detail->quantity;
+                $variant->save();
+            }
+            $product = $detail->product;
+            $product->inventory -= $detail->quantity;
+            $product->sold += $detail->quantity;
+            $product->save();
+        }
         $total = collect($details)->map(function ($detail) {
             return $detail->price * $detail->quantity;
         })->toArray();
 
         $bill->update(["total" => array_sum($total) + $bill->shipping_fee]);
+
+        $bill->user->notify(new CreateBillNotification($bill));
+        $bill->shop->notify(new CreateBillNotification($bill, true));
         return $bill;
     }
 
@@ -83,6 +97,6 @@ class BillService
         }
 
         // gia ship co ban * tong ship cac san pham * he so random
-        return intval(round($carrier->price *  (1 + $total)));
+        return intval(round($carrier->price * (1 + $total)));
     }
 }

@@ -17,7 +17,6 @@ class PreviewOrderResource extends JsonResource
     {
         $shop = $this["shop"];
         $delay = random_int(2, 5);
-        info($shop);
         return [
             "shop_name" => $shop->name,
             "warehouse" => $shop->warehouse->address,
@@ -25,8 +24,8 @@ class PreviewOrderResource extends JsonResource
             "shipping_fee" => $this["shipping_fee"],
             "shipping_carrier" => $shop->carrier->name,
             "delivery_time" => PreviewOrderResource::formatDate(Carbon::now()->addDays($delay))
-                . "-"
-                . PreviewOrderResource::formatDate(Carbon::now()->addDays($delay + 2)),
+            . "-"
+            . PreviewOrderResource::formatDate(Carbon::now()->addDays($delay + 2)),
             "cart_ids" => $this["carts"]->pluck("id"),
             "products" => ProductOrderResource::collection($this["carts"]),
 

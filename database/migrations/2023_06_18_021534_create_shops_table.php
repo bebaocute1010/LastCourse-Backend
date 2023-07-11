@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->unique();
             $table->unsignedBigInteger('carrier_id');
             $table->string('name', 50);
+            $table->string('email', 255);
             $table->unsignedBigInteger('avatar');
             $table->unsignedBigInteger('banner');
             $table->double('rating')->default(0);

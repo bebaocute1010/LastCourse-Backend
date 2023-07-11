@@ -17,6 +17,7 @@ class ShopInforResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
+            "email" => $this->email,
             "avatar" => $this->avatar()->url,
             "banner" => $this->banner()->url,
             "locate" => $this->locate,
