@@ -99,6 +99,10 @@ class ProductController extends Controller
 
     public function searchProducts(Request $request)
     {
+        $search = "";
+        if ($request->search) {
+            $search = str_replace('-', '', Str::slug($request->search));
+        }
         return new SearchProductResource(
             $this->product_service->searchProducts(
                 $request->search ?? "",
@@ -141,7 +145,7 @@ class ProductController extends Controller
 
     public function delete(Request $request)
     {
-    if ($request->id && $this->product_service->delete($request->id)) {
+        if ($request->id && $this->product_service->delete($request->id)) {
             return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::PRODUCT_DELETE_SUCCESS);
         }
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);

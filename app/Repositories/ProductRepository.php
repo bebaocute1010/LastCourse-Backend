@@ -46,6 +46,7 @@ class ProductRepository
                 $query->orderBy("price", $sort_desc_price ? "desc" : "asc");
             })
             ->get();
+        info($products);
         return $products;
     }
 
