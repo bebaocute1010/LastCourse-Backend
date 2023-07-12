@@ -16,6 +16,7 @@ class ShopProfileResource extends JsonResource
     {
         $products_count = $this->allProducts->count();
         return [
+            "id" => $this->id,
             "name" => $this->name,
             "avatar" => $this->avatar()->url,
             "banner" => $this->banner()->url,
@@ -24,6 +25,7 @@ class ShopProfileResource extends JsonResource
             "products_count" => $products_count,
             "num_page" => ceil($products_count / 24),
             "products" => CompactProductResource::collection($this->products()),
+            "is_followed" => $this->is_followed,
         ];
     }
 }

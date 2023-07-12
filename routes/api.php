@@ -72,6 +72,8 @@ Route::prefix("product")->controller(ProductController::class)->group(function (
 
 Route::prefix("shop")->controller(ShopController::class)->middleware("auth:api")->group(function () {
     Route::post("create", "updateOrCreate");
+    Route::any("follow/{shop_id}", "follow");
+    Route::any("unfollow/{shop_id}", "unFollow");
     Route::middleware("shop")->group(function () {
         Route::post("update", "updateOrCreate");
         Route::delete("delete", "delete");
