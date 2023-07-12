@@ -26,9 +26,9 @@ class CategoryService
         return $this->category_repository->getCategoriesLevel2($parent_id);
     }
 
-    public function searchCategories(string $search)
+    public function searchCategories($search)
     {
-        $keywords = $search ? explode(" ", $search) : [];
+        $keywords = $search ? str_split($search) : [];
         return $this->category_repository->searchCategories($keywords);
     }
 }

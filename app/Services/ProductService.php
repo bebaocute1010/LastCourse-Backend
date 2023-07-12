@@ -12,6 +12,7 @@ class ProductService
     private $product_variant_service;
     private $discount_range_service;
     private $shop_service;
+    private $category_service;
     private $uploader;
 
     public function __construct()
@@ -20,6 +21,7 @@ class ProductService
         $this->product_variant_service = new ProductVariantService();
         $this->discount_range_service = new DiscountRangeService();
         $this->shop_service = new ShopService();
+        $this->category_service = new CategoryService();
         $this->uploader = new Uploader();
     }
 
@@ -54,6 +56,7 @@ class ProductService
         $num_page = ceil($products->count() / $per_page);
         $data["num_page"] = $num_page;
         $data["products"] = $products->slice(($page - 1) * $per_page, $per_page);
+        $data["categories"] = $this->category_service->searchCategories($search);
         return $data;
     }
 

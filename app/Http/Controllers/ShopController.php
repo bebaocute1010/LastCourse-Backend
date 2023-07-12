@@ -8,6 +8,7 @@ use App\Http\Resources\ProductInforResource;
 use App\Http\Resources\ProductShopResource;
 use App\Http\Resources\ShopInforResource;
 use App\Http\Resources\ShopProfileResource;
+use App\Services\FollowerService;
 use App\Services\ProductService;
 use App\Services\ShopService;
 use App\Utils\MessageResource;
@@ -19,20 +20,38 @@ class ShopController extends Controller
     private $shop_service;
     private $bill_ctl;
     private $product_service;
+    private $follower_service;
 
     public function __construct()
     {
         $this->shop_service = new ShopService();
         $this->product_service = new ProductService();
+        $this->follower_service = new FollowerService();
         $this->bill_ctl = new BillController;
+    }
+
+    public function unFollow($shop_id)
+    {
+        if ($this->follower_service->unFollow($shop_id)) {
+            return JsonResponse::successWithData([]);
+        }
+        return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
+    }
+
+    public function follow($shop_id)
+    {
+        if ($this->follower_service->follow($shop_id)) {
+            return JsonResponse::successWithData([]);
+        }
+        return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }
 
     public function getShopProfile($id)
     {
         if ($shop = $this->shop_service->find($id)) {
+            $shop->is_followed = $this->follower_service->checkFollowed($shop->id);
             return new ShopProfileResource($shop);
         }
-
     }
 
     public function getInforShop()

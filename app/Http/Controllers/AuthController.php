@@ -9,6 +9,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\SendOtpRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\VerifyAccountRequest;
+use App\Http\Resources\NotificationResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\AuthService;
@@ -27,6 +28,28 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->auth_service = new AuthService();
+    }
+    
+    public function getNumberCart()
+    {
+        return JsonResponse::successWithData(["number_cart" => auth()->user()->carts->count()]);
+    }
+
+    public function markReadAllNotifications() {
+        auth()->user()->unreadNotifications->markAsRead();
+        if ($shop = auth()->user()->shop) {
+            $shop->unreadNotifications->markAsRead();
+        }
+        return response()->json();
+    }
+
+    public function getNotiifications()
+    {
+        $notifications = auth()->user()->notifications;
+        if ($shop = auth()->user()->shop) {
+            $notifications = $notifications->merge($shop->notifications)->sortBy('read_at');
+        }
+        return NotificationResource::collection($notifications);
     }
 
     public function updateProfile(UpdateProfileRequest $request)

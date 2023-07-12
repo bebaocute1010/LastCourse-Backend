@@ -12,6 +12,14 @@ use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("get")->group(function () {
+    Route::controller(AuthController::class)->middleware("auth:api")->group(function () {
+        Route::prefix("notifications")->group(function () {
+            Route::get("/", "getNotiifications");
+            Route::put("mark-read-all", "markReadAllNotifications");
+        });
+        Route::get("number-cart", "getNumberCart");
+    });
+
     Route::controller(CategoryController::class)->prefix("category")->group(function () {
         Route::get("search", "searchCategories");
         Route::get("level1", "getCategoriesLevel1");
@@ -64,6 +72,8 @@ Route::prefix("product")->controller(ProductController::class)->group(function (
 
 Route::prefix("shop")->controller(ShopController::class)->middleware("auth:api")->group(function () {
     Route::post("create", "updateOrCreate");
+    Route::any("follow/{shop_id}", "follow");
+    Route::any("unfollow/{shop_id}", "unFollow");
     Route::middleware("shop")->group(function () {
         Route::post("update", "updateOrCreate");
         Route::delete("delete", "delete");
