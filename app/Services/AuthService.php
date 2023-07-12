@@ -22,6 +22,23 @@ class AuthService
         $this->uploader = new Uploader();
     }
 
+    public function forgotPassword($email)
+    {
+        if ($user = $this->user_repository->getUserByEmail($email)) {
+            return $this->sendOtp($user->email);
+        }
+        return null;
+    }
+
+    public function resetPassword(array $data)
+    {
+        if ($user = $this->user_repository->getUserByEmail($data["email"])) {
+            $user->password = $data["password"];
+            $user->save();
+        }
+        return $user;
+    }
+
     public function updateProfile(array $data)
     {
         if (isset($data["avatar"])) {

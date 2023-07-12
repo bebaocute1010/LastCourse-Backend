@@ -53,6 +53,8 @@ Route::prefix("auth")->controller(AuthController::class)->group(function () {
     Route::post("verify-account", "verifyAccount");
     Route::post("register-information", "registerInformation");
     Route::post("get-otp", "sendOtp");
+    Route::post("forgot-password", "forgotPassword");
+    Route::post("reset-password", "resetPassword");
 });
 
 Route::prefix("product")->controller(ProductController::class)->group(function () {

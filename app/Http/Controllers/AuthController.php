@@ -6,6 +6,7 @@ use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterInformationRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\SendOtpRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\VerifyAccountRequest;
@@ -16,6 +17,7 @@ use App\Services\AuthService;
 use App\Utils\MessageResource;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -29,13 +31,31 @@ class AuthController extends Controller
     {
         $this->auth_service = new AuthService();
     }
-    
+
+    public function resetPassword(ResetPasswordRequest $request)
+    {
+        $data_validated = $request->validated();
+        if ($this->auth_service->resetPassword($data_validated)) {
+            return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::RESET_PASSWORD_SUCCESS);
+        }
+        return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        if ($otp = $this->auth_service->forgotPassword($request->email)) {
+            return JsonResponse::successWithData($otp);
+        }
+        return JsonResponse::error(MessageResource::ACCOUNT_NOT_EXIST, JsonResponse::HTTP_CONFLICT);
+    }
+
     public function getNumberCart()
     {
         return JsonResponse::successWithData(["number_cart" => auth()->user()->carts->count()]);
     }
 
-    public function markReadAllNotifications() {
+    public function markReadAllNotifications()
+    {
         auth()->user()->unreadNotifications->markAsRead();
         if ($shop = auth()->user()->shop) {
             $shop->unreadNotifications->markAsRead();

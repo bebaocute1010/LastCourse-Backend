@@ -45,6 +45,8 @@ class MessageResource
 
     public const CHANGE_PASSWORD_SUCCESS = "Đổi mật khẩu thành công.";
 
+    public const RESET_PASSWORD_SUCCESS = "Đặt lại mật khẩu thành công.";
+
     public const AUTH_PASSWORD_NOT_CORRECT = "Mật khẩu không chính xác.";
 
     public const LOGIN_SUCCESS_TITLE = "Đăng nhập thành công";
