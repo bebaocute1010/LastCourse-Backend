@@ -44,9 +44,9 @@ class ProductVariantService
                 for ($j = 0; $j <= max(array_keys($data["sizes"])); $j++) {
                     $data_create = [
                         "product_id" => $data["product_id"],
-                        "color" => $data["colors"][$i],
+                        "color" => $data["colors"][$i] != "null" ? $data["colors"][$i] : null,
                         "color_image_id" => $data["image_colors"][$i] ?? null,
-                        "size" => $data["sizes"][$j],
+                        "size" => $data["sizes"][$j] != "null" ? $data["sizes"][$j] : null,
                         "size_image_id" => $data["image_sizes"][$j] ?? null,
                         "quantity" => $data["variants_item_quantity"][$i][$j] ?? 0,
                         "price" => $data["variants_item_price"][$i][$j] ?? 0,
@@ -58,7 +58,7 @@ class ProductVariantService
                     "product_id" => $data["product_id"],
                     "color" => null,
                     "color_image_id" => null,
-                    "size" => $data["sizes"][$i],
+                    "size" => $data["sizes"][$i] != "null" ? $data["sizes"][$i] : null,
                     "size_image_id" => $data["image_sizes"][$i] ?? null,
                     "quantity" => $data["variants_item_quantity"][1][$i] ?? 0,
                     "price" => $data["variants_item_price"][1][$i] ?? 0,
@@ -67,7 +67,7 @@ class ProductVariantService
             } else {
                 $data_create = [
                     "product_id" => $data["product_id"],
-                    "color" => $data["colors"][$i],
+                    "color" => $data["colors"][$i] != "null" ? $data["colors"][$i] : null,
                     "color_image_id" => $data["image_colors"][$i] ?? null,
                     "size" => null,
                     "size_image_id" => null,

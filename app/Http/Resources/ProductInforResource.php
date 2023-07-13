@@ -58,8 +58,6 @@ class ProductInforResource extends JsonResource
             "variant_images" => [$colorImages, $sizeImages],
             "variants_item_quantity" => $groupedQuantities->pluck("quantities")->toArray(),
             "variants_item_price" => $groupedQuantities->pluck("prices")->toArray(),
-            "colors" => $this->colors(),
-            "sizes" => $this->sizes(),
             "discount_ranges_min" => $discount_ranges->pluck("min"),
             "discount_ranges_max" => $discount_ranges->pluck("max"),
             "discount_ranges_amount" => $discount_ranges->pluck("amount"),
