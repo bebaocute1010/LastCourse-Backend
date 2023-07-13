@@ -47,7 +47,7 @@ class ProductInforResource extends JsonResource
             "name" => $this->name,
             "detail" => $this->detail,
             "brand" => $this->brand,
-            "warehouse" => $this->warehouse->name,
+            "inventory" => $this->inventory,
             "price" => $this->price,
             "promotional_price" => $this->promotional_price,
             "weight" => $this->weight,

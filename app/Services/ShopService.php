@@ -3,17 +3,20 @@
 namespace App\Services;
 
 use App\Repositories\ShopRepository;
+use App\Repositories\WarehouseRepository;
 use App\Utils\Uploader;
 use Illuminate\Support\Arr;
 
 class ShopService
 {
     private $shop_repository;
+    private $warehouse_repository;
     private $uploader;
 
     public function __construct()
     {
         $this->shop_repository = new ShopRepository();
+        $this->warehouse_repository = new WarehouseRepository();
         $this->uploader = new Uploader();
     }
 
@@ -38,14 +41,28 @@ class ShopService
         } else {
             Arr::forget($data, "banner");
         }
-        return $this->shop_repository->update($id, $data);
+        $warehouse = $data["warehouse"];
+        Arr::forget("warehouse");
+        $shop = $this->shop_repository->update($id, $data);
+        $shop->warehouse->update($warehouse);
+        return $shop;
     }
 
     public function create(array $data)
     {
         $data["avatar"] = $this->uploader->upload($data["avatar"])->id;
         $data["banner"] = $this->uploader->upload($data["banner"])->id;
-        return $this->shop_repository->create($data);
+        $warehouse = $data["warehouse"];
+        info($data);
+        unset($data["warehouse"]);
+        $shop = $this->shop_repository->create($data);
+        $warehouse["shop_id"] = $shop->id;
+        if ($this->warehouse_repository->create($warehouse)) {
+            return $shop;
+        } else {
+            $shop->forceDelete();
+            return null;
+        }
     }
 
     public function updateRating($id)

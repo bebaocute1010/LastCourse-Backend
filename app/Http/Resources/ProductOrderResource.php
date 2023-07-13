@@ -28,7 +28,7 @@ class ProductOrderResource extends JsonResource
 
     public function getPrice($product, $variant, $quantity)
     {
-        $price = $product->price;
+        $price = $product->promotional_price ?? $product->price;
         if ($variant != null) {
             $price = $variant->price;
         }

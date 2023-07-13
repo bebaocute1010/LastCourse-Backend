@@ -28,8 +28,10 @@ class CreateShopRequest extends FormRequest
             "name" => "required|string|max:50",
             "email" => "required|email|max:255",
             "locate" => "required|string|max:255",
-            "avatar" => "required",
-            "banner" => "required",
+            "avatar" => "required|image|max:2048",
+            "banner" => "required|image|max:2048",
+            "warehouse" => "required|array",
+            "warehouse.*" => "required|string",
         ];
     }
 }

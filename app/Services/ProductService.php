@@ -151,8 +151,8 @@ class ProductService
                     $this->uploader->delete($id);
                 }
             }
-            $color_image_ids = $this->findImageIds($data["variant_images"][0]);
-            $size_image_ids = $this->findImageIds($data["variant_images"][1]);
+            $color_image_ids = $this->findImageIds($data["variant_images"][0] ?? []);
+            $size_image_ids = $this->findImageIds($data["variant_images"][1] ?? []);
             foreach ($product->variants as $key => $variant) {
                 if (!in_array($variant->color_image_id, $color_image_ids)) {
                     $this->uploader->delete($variant->color_image_id);
@@ -186,6 +186,11 @@ class ProductService
                         $product->id
                     )
                 );
+                $product->inventory = 0;
+                foreach ($product->variants as $variant) {
+                    $product->inventory += $variant->quantity;
+                }
+                $product->save();
             }
             if ($product->is_buy_more_discount) {
                 $this->discount_range_service->create(
@@ -197,10 +202,6 @@ class ProductService
                 );
             }
         }
-        foreach ($product->variants as $variant) {
-            $product->inventory += $variant->quantity;
-        }
-        $product->save();
         return $product;
     }
 
