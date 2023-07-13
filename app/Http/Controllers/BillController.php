@@ -24,7 +24,7 @@ class BillController extends Controller
     public function getBillDetails(Request $request)
     {
         if ($bill = $this->bill_service->find($request->id)) {
-            if ($bill->user_id == auth()->id()) {
+            if ($bill->user_id == auth()->id() || $bill->shop_id == auth()->user()->shop->id) {
                 return BillDetailResource::collection($bill->details);
             }
         }

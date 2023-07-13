@@ -55,7 +55,7 @@ class ImageSeeder extends Seeder
         }
 
         for ($i = 1; $i <= 960; $i++) {
-            Image::create(["url" => "http://localhost:8000/storage/ImagesSeeder/" . $i . ".jpg"]);
+            Image::create(["url" => env("APP_URL") . "/storage/ImagesSeeder/" . $i . ".jpg"]);
         }
     }
 }
