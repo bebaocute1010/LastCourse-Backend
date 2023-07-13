@@ -31,12 +31,17 @@ class BillController extends Controller
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }
 
-    public function getBills($isShop = null)
+    public function getBills(Request $request, $is_shop = null)
     {
-        if (!$isShop) {
-            return BillResource::collection(auth()->user()->bills);
+        if (!$is_shop) {
+            $bills = auth()->user()->bills;
+        } else {
+            $bills = auth()->user()->shop->bills;
         }
-        return BillResource::collection(auth()->user()->shop->bills);
+        if ($search_string = $request->search) {
+            return BillResource::collection($this->bill_service->getFilterBill($bills, $search_string));
+        }
+        return BillResource::collection($bills);
     }
 
     public function updateOrCreate(CreateBillRequest $request)

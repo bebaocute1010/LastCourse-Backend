@@ -69,14 +69,18 @@ class ShopController extends Controller
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }
 
-    public function getProducts()
+    public function getProducts(Request $request)
     {
-        return ProductShopResource::collection(auth()->user()->shop->allProducts);
+        $products = auth()->user()->shop->allProducts;
+        if ($request->search) {
+            return ProductShopResource::collection($this->shop_service->filterProducts($products, $request->search));
+        }
+        return ProductShopResource::collection($products);
     }
 
-    public function getBills()
+    public function getBills(Request $request)
     {
-        return $this->bill_ctl->getBills(true);
+        return $this->bill_ctl->getBills($request, true);
     }
 
     public function updateOrCreate(CreateShopRequest $request)

@@ -20,6 +20,21 @@ class ShopService
         $this->uploader = new Uploader();
     }
 
+    public function filterProducts($products, $search_string)
+    {
+        $keywords = explode(" ", strtolower($search_string));
+
+        $filtered_products = $products->filter(function ($product) use ($keywords) {
+            foreach ($keywords as $keyword) {
+                if (str_contains(strtolower($product->name), $keyword)) {
+                    return true;
+                }
+            }
+            return false;
+        })->values();
+        return $filtered_products;
+    }
+
     public function find($id)
     {
         return $this->shop_repository->find($id);
@@ -42,7 +57,7 @@ class ShopService
             Arr::forget($data, "banner");
         }
         $warehouse = $data["warehouse"];
-        Arr::forget("warehouse");
+        unset($data["warehouse"]);
         $shop = $this->shop_repository->update($id, $data);
         $shop->warehouse->update($warehouse);
         return $shop;

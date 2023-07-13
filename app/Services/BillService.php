@@ -26,6 +26,21 @@ class BillService
         $this->cart_service = new CartService();
     }
 
+    public function getFilterBill($bills, $search_string)
+    {
+        $keywords = explode(" ", strtolower($search_string));
+
+        $filtered_bills = $bills->filter(function ($bill) use ($keywords) {
+            foreach ($keywords as $keyword) {
+                if (str_contains(strtolower($bill->receiver), $keyword) || str_contains($bill->phone, $keyword) || str_contains(strtolower($bill->address), $keyword)) {
+                    return true;
+                }
+            }
+            return false;
+        })->values();
+        return $filtered_bills;
+    }
+
     public function find($id)
     {
         return $this->bill_repository->find($id);
