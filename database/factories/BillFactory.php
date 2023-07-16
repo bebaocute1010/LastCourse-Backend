@@ -38,7 +38,7 @@ class BillFactory extends Factory
             "address" => $this->faker->address(),
             "shipping_fee" => $this->faker->numberBetween(10000, 30000),
             "status" => $this->faker->numberBetween(1, 5),
-            "total" => $this->faker->numberBetween(1000, 20000000),
+            "total" => $this->faker->numberBetween(1000, 500000),
             "payment_method" => $this->faker->numberBetween(0, 1),
         ];
     }

@@ -8,7 +8,6 @@ use App\Models\Bill;
 use App\Models\BillDetail;
 use App\Models\Cart;
 use App\Models\Comment;
-use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -24,10 +23,8 @@ class DatabaseSeeder extends Seeder
         $this->call(CategorySeeder::class);
         $this->call(CarrierSeeder::class);
         $this->call(ProductConditionSeeder::class);
-        $this->call(ImageSeeder::class);
         $this->call(ShopSeeder::class);
-        $this->call(WarehouseSeeder::class);
-        Product::factory(320)->create();
+        $this->call(ProductSeeder::class);
         User::factory(50)->create();
         Cart::factory(1000)->create();
         Bill::factory(1000)->create();

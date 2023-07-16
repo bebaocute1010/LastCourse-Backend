@@ -22,9 +22,9 @@ class BillDetailFactory extends Factory
         // $product_ids = Product::all()->pluck("id")->toArray();
         return [
             "bill_id" => fake()->numberBetween(1,1000),
-            "product_id" => fake()->numberBetween(1, 320),
-            "quantity" => fake()->numberBetween(1, 50),
-            "price" => fake()->numberBetween(10000, 30000000),
+            "product_id" => fake()->numberBetween(1, 1080),
+            "quantity" => fake()->numberBetween(1, 10),
+            "price" => fake()->numberBetween(1000, 30000),
         ];
     }
 }

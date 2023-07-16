@@ -16,62 +16,87 @@ class CategorySeeder extends Seeder
     {
         $cats = [
             [
-                "name" => "Thời Trang Nữ",
+                "name" => "Máy tính và Laptop",
                 "sub_cats" => [
-                    "Quần",
-                    "Quần đùi",
-                    "Chân váy",
-                    "Quần jeans",
-                    "Đầm/Váy",
-                    "Váy cưới",
+                    [
+                        "name" => "Phụ kiện máy tính",
+                    ],
                 ],
             ],
             [
-                "name" => "Thời Trang Nam",
-                "sub_cats" => [
-                    "Áo Khoác",
-                    "Áo Vest và Blazer",
-                    "Áo Hoodie, Áo Len & Áo Nỉ",
-                    "Quần Jeans",
-                    "Quần Dài/Quần Âu",
-                    "Quần Short",
-                ],
+                "name" => "Nhà cửa và đời sống",
             ],
             [
-                "name" => "Đồng Hồ",
-                "sub_cats" => [
-                    "Đồng Hồ Nam",
-                    "Đồng Hồ Nữ",
-                    "Bộ Đồng Hồ & Đồng Hồ Cặp",
-                    "Đồng Hồ Trẻ Em",
-                    "Phụ Kiện Đồng Hồ",
-                ],
+                "name" => "Nhà sách online",
             ],
             [
-                "name" => "Giày Dép",
+                "name" => "Thời trang",
                 "sub_cats" => [
-                    "Bốt",
-                    "Giày Thể Thao/ Sneakers",
-                    "Giày Sục",
-                ],
-            ],
-            [
-                "name" => "Máy Tính & Laptop",
-                "sub_cats" => [
-                    "Máy Tính Bàn",
-                    "Màn Hình",
-                    "Linh Kiện Máy Tính",
-                    "Thiết Bị Lưu Trữ",
+                    [
+                        "name" => "Đồng hồ",
+                        "sub_cats" => [
+                            [
+                                "name" => "Đồng hồ nam",
+                            ],
+                            [
+                                "name" => "Đồng hồ nữ",
+                            ],
+                        ],
+                    ],
+                    [
+                        "name" => "Thời trang nam",
+                        "sub_cats" => [
+                            [
+                                "name" => "Áo sơ mi",
+                            ],
+                            [
+                                "name" => "Áo thun",
+                            ],
+                            [
+                                "name" => "Áo Vest và Blazer",
+                                "sub_cats" => [
+                                    [
+                                        "name" => "Bộ Com lê"
+                                    ]
+                                ]
+                            ],
+                        ],
+                    ],
+                    [
+                        "name" => "Thời trang nữ",
+                        "sub_cats" => [
+                            [
+                                "name" => "Chân váy",
+                            ],
+                            [
+                                "name" => "Quần jeans",
+                            ],
+                            [
+                                "name" => "Set đồ nữ",
+                                "sub_cats" => [
+                                    [
+                                        "name" => "Đồ ngủ",
+                                    ],
+                                    [
+                                        "name" => "Đồ truyền thống"
+                                    ]
+                                ]
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ];
 
-        $id = 1;
-        $cat_lv1_id = 1;
+        $this->loadCats($cats);
+    }
+
+    private function loadCats($cats, $parent_id = null)
+    {
         foreach ($cats as $cat) {
-            $category = $this->updateOrCreate(["name" => $cat["name"], "parent_id" => null]);
-            foreach ($cat["sub_cats"] as $sub_cat) {
-                $this->updateOrCreate(["name" => $sub_cat, "parent_id" => $category->id]);
+            $category = $this->updateOrCreate(["name" => $cat["name"], "parent_id" => $parent_id]);
+            if (isset($cat["sub_cats"])) {
+                $this->loadCats($cat["sub_cats"], $category->id);
             }
         }
     }
