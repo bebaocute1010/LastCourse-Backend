@@ -18,8 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('shop_id');
             $table->unsignedBigInteger('cat_id');
             $table->unsignedBigInteger('condition_id');
-            $table->unsignedBigInteger('warehouse_id');
-            $table->json('image_ids')->nullable();
+            $table->json('images')->nullable();
             $table->tinyInteger('is_variant')->nullable();
             $table->tinyInteger('is_pre_order')->nullable();
             $table->tinyInteger('is_buy_more_discount')->nullable();
@@ -27,7 +26,7 @@ return new class extends Migration
             $table->string('name', 255);
             $table->string('slug', 300)->unique();
             $table->string('detail', 1500);
-            $table->string('brand', 100)->default('No Brand');
+            $table->string('brand', 100)->nullable();
             $table->unsignedInteger('inventory')->default(0);
             $table->unsignedInteger('sold')->default(0);
             $table->unsignedInteger('price');

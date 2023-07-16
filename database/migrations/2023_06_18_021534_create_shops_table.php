@@ -18,9 +18,10 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->unique();
             $table->unsignedBigInteger('carrier_id');
             $table->string('name', 50);
+            $table->string('warehouse', 150);
             $table->string('email', 255);
-            $table->unsignedBigInteger('avatar');
-            $table->unsignedBigInteger('banner');
+            $table->string('avatar', 500);
+            $table->string('banner', 500);
             $table->double('rating')->default(0);
             $table->string('locate');
             $table->softDeletes();

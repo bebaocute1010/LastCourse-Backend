@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('product_id');
             $table->string('color', 50)->nullable();
-            $table->unsignedBigInteger('color_image_id')->nullable();
+            $table->string('color_image', 500)->nullable();
             $table->string('size', 50)->nullable();
-            $table->unsignedBigInteger('size_image_id')->nullable();
+            $table->string('size_image', 500)->nullable();
             $table->unsignedInteger('quantity')->default(0);
             $table->unsignedInteger('price')->default(0);
             $table->softDeletes();
