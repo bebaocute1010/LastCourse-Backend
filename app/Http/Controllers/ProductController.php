@@ -157,7 +157,6 @@ class ProductController extends Controller
         $shop = auth()->user()->shop;
         $data_validated = array_merge($data_validated, [
             "shop_id" => $shop->id,
-            "warehouse_id" => $shop->warehouse->id,
             "slug" => $this->createSlug($data_validated["name"]),
         ]);
         if ($request->id) {

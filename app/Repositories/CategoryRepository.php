@@ -35,8 +35,7 @@ class CategoryRepository
                 }
 
                 return $count;
-            })
-            ->take(10);
+            });
         return $categories;
     }
 }

@@ -12,14 +12,4 @@ class ProductVariant extends Model
     use SoftDeletes;
 
     protected $guarded = [];
-
-    public function colorImage()
-    {
-        return $this->belongsTo(Image::class);
-    }
-
-    public function sizeImage()
-    {
-        return $this->belongsTo(Image::class);
-    }
 }

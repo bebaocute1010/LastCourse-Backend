@@ -32,6 +32,6 @@ class ShopRepository
             $totalRating += $product->getTotalRating();
             $ratingCount += $product->evaluateComments()->count();
         }
-        return round($totalRating / $ratingCount, 1);
+        return $totalRating / $ratingCount;
     }
 }

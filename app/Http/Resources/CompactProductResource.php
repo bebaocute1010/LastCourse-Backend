@@ -14,13 +14,14 @@ class CompactProductResource extends JsonResource
      */
     public function toArray($request)
     {
+        info($this->images);
         return [
             "slug" => $this->slug,
             "name" => $this->name,
-            "image" => $this->firstImage->url ?? null,
+            "image" => $this->images[0] ?? null,
             "price" => $this->price,
             "sold" => $this->sold,
-            "rating" => $this->rating
+            "rating" => round($this->rating, 1),
         ];
     }
 }

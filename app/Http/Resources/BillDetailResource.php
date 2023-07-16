@@ -19,7 +19,7 @@ class BillDetailResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->product->name,
-            "image" => $this->product->firstImage->url,
+            "image" => $this->product->images[0],
             "price" => $this->price,
             "variant" => $variant ? $this->getVariantString($variant) : "-",
             "quantity" => $this->quantity,

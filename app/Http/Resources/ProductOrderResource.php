@@ -14,12 +14,9 @@ class ProductOrderResource extends JsonResource
      */
     public function toArray($request)
     {
-        // Truyền vào 1 Cart
-        // dd($this);
         $product = $this->product;
-        // dd($product);
         return [
-            "image" => $product->firstImage->url,
+            "image" => $product->images[0],
             "name" => $product->name,
             "price" => $this->getPrice($product, $this->variant, $this->quantity),
             "quantity" => $this->quantity,

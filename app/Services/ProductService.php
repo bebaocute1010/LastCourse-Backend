@@ -106,19 +106,10 @@ class ProductService
         }
         if ($product) {
             foreach ($product->variants as $variants) {
-                if ($variants->colorImage) {
-                    $variants->colorImage->delete();
-                }
-                if ($variants->sizeImage) {
-                    $variants->sizeImage->delete();
-                }
                 $variants->delete();
             }
             foreach ($product->discountRanges as $discount) {
                 $discount->delete();
-            }
-            foreach ($product->images() as $image) {
-                $image->delete();
             }
             foreach ($product->carts as $cart) {
                 $cart->delete();
@@ -136,32 +127,28 @@ class ProductService
             $product = null;
         }
         if (Arr::exists($data, "images")) {
-            $data = Arr::add($data, "image_ids", $this->uploader->getImageIds($data["images"]));
-            Arr::forget($data, "images");
+            $data["images"] = $this->uploader->getImagesUrl($data["images"]);
         }
 
         if (Arr::exists($data, "id") && $product) {
             if ($product->shop_id != $data["shop_id"]) {
                 return false;
             }
-            $old_image_ids = $product->image_ids;
-            foreach ($old_image_ids as $key => $id) {
-                if (!in_array($id, $data["image_ids"])) {
-                    info("images: " . $id);
-                    $this->uploader->delete($id);
-                }
-            }
-            $color_image_ids = $this->findImageIds($data["variant_images"][0] ?? []);
-            $size_image_ids = $this->findImageIds($data["variant_images"][1] ?? []);
-            foreach ($product->variants as $key => $variant) {
-                if (!in_array($variant->color_image_id, $color_image_ids)) {
-                    $this->uploader->delete($variant->color_image_id);
-                    info("0:" . $key);
-                }
-                if (!in_array($variant->size_image_id, $size_image_ids)) {
-                    $this->uploader->delete($variant->size_image_id);
-                    info("1:" . $key);
-                }
+            // $old_image_ids = $product->image_ids;
+            // foreach ($old_image_ids as $key => $id) {
+            //     if (!in_array($id, $data["image_ids"])) {
+            //         $this->uploader->delete($id);
+            //     }
+            // }
+            // $color_image_ids = $this->findImageIds($data["variant_images"][0] ?? []);
+            // $size_image_ids = $this->findImageIds($data["variant_images"][1] ?? []);
+            foreach ($product->variants as $variant) {
+                // if (!in_array($variant->color_image_id, $color_image_ids)) {
+                //     $this->uploader->delete($variant->color_image_id);
+                // }
+                // if (!in_array($variant->size_image_id, $size_image_ids)) {
+                //     $this->uploader->delete($variant->size_image_id);
+                // }
                 $variant->forceDelete();
             }
             foreach ($product->discountRanges as $discount) {

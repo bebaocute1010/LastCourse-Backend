@@ -25,7 +25,7 @@ class CartResource extends JsonResource
             ] : null,
             "price" => $variant ? $variant->price : $product->price,
             "quantity" => $this->quantity,
-            "image" => $product->firstImage->url ?? "#",
+            "image" => $product->images[0] ?? null,
         ];
     }
 }

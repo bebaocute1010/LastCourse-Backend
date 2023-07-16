@@ -45,9 +45,9 @@ class ProductVariantService
                     $data_create = [
                         "product_id" => $data["product_id"],
                         "color" => $data["colors"][$i] != "null" ? $data["colors"][$i] : null,
-                        "color_image_id" => $data["image_colors"][$i] ?? null,
+                        "color_image" => $data["image_colors"][$i] ?? null,
                         "size" => $data["sizes"][$j] != "null" ? $data["sizes"][$j] : null,
-                        "size_image_id" => $data["image_sizes"][$j] ?? null,
+                        "size_image" => $data["image_sizes"][$j] ?? null,
                         "quantity" => $data["variants_item_quantity"][$i][$j] ?? 0,
                         "price" => $data["variants_item_price"][$i][$j] ?? 0,
                     ];
@@ -57,9 +57,9 @@ class ProductVariantService
                 $data_create = [
                     "product_id" => $data["product_id"],
                     "color" => null,
-                    "color_image_id" => null,
+                    "color_image" => null,
                     "size" => $data["sizes"][$i] != "null" ? $data["sizes"][$i] : null,
-                    "size_image_id" => $data["image_sizes"][$i] ?? null,
+                    "size_image" => $data["image_sizes"][$i] ?? null,
                     "quantity" => $data["variants_item_quantity"][1][$i] ?? 0,
                     "price" => $data["variants_item_price"][1][$i] ?? 0,
                 ];
@@ -68,9 +68,9 @@ class ProductVariantService
                 $data_create = [
                     "product_id" => $data["product_id"],
                     "color" => $data["colors"][$i] != "null" ? $data["colors"][$i] : null,
-                    "color_image_id" => $data["image_colors"][$i] ?? null,
+                    "color_image" => $data["image_colors"][$i] ?? null,
                     "size" => null,
-                    "size_image_id" => null,
+                    "size_image" => null,
                     "quantity" => $data["variants_item_quantity"][0][$i] ?? 0,
                     "price" => $data["variants_item_price"][0][$i] ?? 0,
                 ];
@@ -82,14 +82,14 @@ class ProductVariantService
 
     private function getArrayImages(array $images = null)
     {
-        $image_ids = [];
+        $image_url = [];
         if ($images) {
             for ($i = 0; $i <= max(array_keys($images)); $i++) {
                 if (isset($images[$i])) {
                     if (gettype($images[$i]) == "string") {
-                        $image_ids[$i] = $this->uploader->getIdImage($images[$i]);
+                        $image_url[$i] = $images[$i];
                     } else if ($image = $this->uploader->upload($images[$i])) {
-                        $image_ids[$i] = $image->id;
+                        $image_url[$i] = $image;
                     } else {
                         info("upload eror");
                         continue;
@@ -97,6 +97,6 @@ class ProductVariantService
                 }
             }
         }
-        return $image_ids;
+        return $image_url;
     }
 }

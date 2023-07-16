@@ -46,7 +46,6 @@ class ProductRepository
                 $query->orderBy("price", $sort_desc_price ? "desc" : "asc");
             })
             ->get();
-        info($products);
         return $products;
     }
 
@@ -95,7 +94,7 @@ class ProductRepository
 
     public function getDetails($slug)
     {
-        return Product::with(['variants.colorImage', 'variants.sizeImage'])->where('slug', $slug)->first();
+        return Product::with(['variants'])->where('slug', $slug)->first();
     }
 
     public function updateOrCreate(array $data)

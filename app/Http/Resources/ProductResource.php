@@ -16,10 +16,10 @@ class ProductResource extends JsonResource
     {
         $variants = $this->variants;
         $colors = $variants->map(function ($variant) {
-            return ["name" => $variant->color, "image" => $variant->colorImage->url ?? null];
+            return ["name" => $variant->color, "image" => $variant->color_image];
         });
         $sizes = $variants->map(function ($variant) {
-            return ["name" => $variant->size, "image" => $variant->sizeImage->url ?? null];
+            return ["name" => $variant->size, "image" => $variant->size_image];
         });
         $shop = $this->shop;
         $all_comments = $this->allComments;
@@ -37,21 +37,21 @@ class ProductResource extends JsonResource
             "sizes" => $sizes->unique("name"),
             "inventory" => $this->inventory,
             "is_variant" => $this->is_variant ? true : null,
-            "images" => $this->images()->pluck("url")->map(function ($url) {
-                return ["url" => $url];
+            "images" => collect($this->images)->map(function ($image) {
+                return ["url" => $image];
             }),
             "shop" => [
                 "id" => $shop->id,
                 "name" => $shop->name,
                 "locate" => $shop->locate,
-                "avatar" => $shop->avatar()->url,
+                "avatar" => $shop->avatar,
                 "product_count" => $shop->allProducts->count(),
                 "rating" => $shop->rating,
                 "followers" => $shop->followers->count(),
                 "rating_count" => $shop_rating_count,
             ],
             "category" => $this->category->name,
-            "address" => $this->warehouse->address,
+            "address" => $this->warehouse,
             "detail" => str_replace("\n", "<br/>", $this->detail),
             "comments" => [
                 "num_page" => ceil($all_comments->count() / 6),

@@ -14,19 +14,15 @@ class ShopInforResource extends JsonResource
      */
     public function toArray($request)
     {
-        $warehouse = $this->warehouse;
         return [
             "id" => $this->id,
             "name" => $this->name,
             "email" => $this->email,
-            "avatar" => $this->avatar()->url,
-            "banner" => $this->banner()->url,
+            "avatar" => $this->avatar,
+            "banner" => $this->banner,
             "locate" => $this->locate,
             "carrier_id" => $this->carrier_id,
-            "warehouse" => [
-                "name" => $warehouse->name,
-                "address" => $warehouse->address,
-            ],
+            "warehouse" => $this->warehouse,
         ];
     }
 }

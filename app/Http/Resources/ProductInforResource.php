@@ -14,16 +14,16 @@ class ProductInforResource extends JsonResource
      */
     public function toArray($request)
     {
-        $this->loadMissing("variants.colorImage", "variants.sizeImage");
+        $this->loadMissing("variants");
         $category = $this->category;
         $parent = $category->parent;
         $variants = $this->variants;
 
         $colorImages = $variants->unique("color")->map(function ($variant) {
-            return $variant->colorImage->url ?? null;
+            return $variant->color_image;
         })->values();
         $sizeImages = $variants->unique("size")->map(function ($variant) {
-            return $variant->sizeImage->url ?? null;
+            return $variant->size_image;
         })->values();
 
         $groupedQuantities = $variants->groupBy("color")->map(function ($variants, $color) {
@@ -37,7 +37,7 @@ class ProductInforResource extends JsonResource
 
         $discount_ranges = $this->discountRanges;
         return [
-            "images" => $this->images()->pluck("url"),
+            "images" => $this->images,
             "cat_lv1_id" => $parent ? $parent->id : $category->id,
             "cat_lv2_id" => $parent ? $category->id : null,
             "condition_id" => $this->condition->id,

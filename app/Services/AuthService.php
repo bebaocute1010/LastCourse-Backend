@@ -42,7 +42,7 @@ class AuthService
     public function updateProfile(array $data)
     {
         if (isset($data["avatar"])) {
-            $data["avatar"] = $this->uploader->upload($data["avatar"])->id;
+            $data["avatar"] = $this->uploader->upload($data["avatar"]);
         }
         return $this->user_repository->updateProfile(auth()->id(), $data);
     }
