@@ -19,22 +19,12 @@ class Comment extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function replies()
+    public function setImagesAttribute($value)
     {
-        return $this->hasMany(Comment::class);
+        $this->attributes['images'] = json_encode($value);
     }
 
-    public function getImages()
-    {
-        return Image::whereIn("id", $this->image_ids)->get();
-    }
-
-    public function setImageIdsAttribute($value)
-    {
-        $this->attributes['image_ids'] = json_encode($value);
-    }
-
-    public function getImageIdsAttribute($value)
+    public function getImagesAttribute($value)
     {
         return json_decode($value);
     }

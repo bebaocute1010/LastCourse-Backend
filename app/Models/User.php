@@ -57,11 +57,6 @@ class User extends Authenticatable implements JWTSubject
             ->orderByDesc("created_at");
     }
 
-    public function avatar()
-    {
-        return Image::find($this->avatar);
-    }
-
     public function getJWTIdentifier()
     {
         return $this->getKey();

@@ -15,6 +15,8 @@ class Shop extends Model
 
     protected $guarded = [];
 
+    public const BANNER_DEFAULT = "https://www.mub.eps.manchester.ac.uk/thebeam/wp-content/themes/uom-theme/assets/images/default-banner.jpg";
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -23,21 +25,6 @@ class Shop extends Model
     public function carrier()
     {
         return $this->belongsTo(Carrier::class);
-    }
-
-    public function warehouse()
-    {
-        return $this->hasOne(Warehouse::class);
-    }
-
-    public function banner()
-    {
-        return Image::find($this->banner);
-    }
-
-    public function avatar()
-    {
-        return Image::find($this->avatar);
     }
 
     public function allProducts()
@@ -63,5 +50,10 @@ class Shop extends Model
     public function bills()
     {
         return $this->hasMany(Bill::class)->orderByDesc("created_at");
+    }
+
+    public function getRatingAttribute($value)
+    {
+        return round($value, 1);
     }
 }

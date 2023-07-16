@@ -54,11 +54,6 @@ class Product extends Model
         return 0.003 * $this->weight + 0.0000001 * $this->length * $this->width * $this->height;
     }
 
-    public function warehouse()
-    {
-        return $this->belongsTo(Warehouse::class);
-    }
-
     public function relates()
     {
         return Product::whereIn("cat_id", [$this->cat_id, $this->category->parent_id])
@@ -75,16 +70,6 @@ class Product extends Model
     public function shop()
     {
         return $this->belongsTo(Shop::class);
-    }
-
-    public function firstImage()
-    {
-        return $this->belongsTo(Image::class, "image_ids");
-    }
-
-    public function images()
-    {
-        return Image::whereIn("id", $this->image_ids)->get();
     }
 
     public function variants()
@@ -116,8 +101,6 @@ class Product extends Model
         $offset = ($page - 1) * $per_page;
 
         return $this->hasMany(Comment::class)
-            ->with("replies")
-            ->whereNull("comment_id")
             ->orderBy("created_at", "desc")
             ->skip($offset)
             ->take($per_page)->get();
@@ -131,7 +114,7 @@ class Product extends Model
     public function getAverageRating()
     {
         $evaluates = $this->evaluateComments();
-        return round($this->getTotalRating() / $evaluates->count(), 1);
+        return $this->getTotalRating() / $evaluates->count();
     }
 
     public function getTotalRating()
@@ -151,13 +134,18 @@ class Product extends Model
         return $this->hasMany(DiscountRange::class);
     }
 
-    public function setImageIdsAttribute($value)
+    public function setImagesAttribute($value)
     {
-        $this->attributes["image_ids"] = json_encode($value);
+        $this->attributes["images"] = json_encode($value);
     }
 
-    public function getImageIdsAttribute($value)
+    public function getImagesAttribute($value)
     {
         return json_decode($value);
+    }
+
+    public function getRatingAttribute($value)
+    {
+        return round($value, 1);
     }
 }
