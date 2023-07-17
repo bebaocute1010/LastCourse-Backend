@@ -29,7 +29,7 @@ class Shop extends Model
 
     public function allProducts()
     {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(Product::class)->orderByDesc("updated_at");
     }
 
     public function products($page = 1)

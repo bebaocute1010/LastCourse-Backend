@@ -22,8 +22,7 @@ Route::prefix("get")->group(function () {
 
     Route::controller(CategoryController::class)->prefix("category")->group(function () {
         Route::get("search", "searchCategories");
-        Route::get("level1", "getCategoriesLevel1");
-        Route::get("level2", "getCategoriesLevel2");
+        Route::get("categories", "getCategories");
     });
     Route::get("carriers", [CarrierController::class, "getCarriers"]);
 

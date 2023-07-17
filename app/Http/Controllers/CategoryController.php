@@ -16,14 +16,9 @@ class CategoryController extends Controller
         $this->category_service = new CategoryService();
     }
 
-    public function getCategoriesLevel1()
+    public function getCategories(Request $request)
     {
-        return CategoryResource::collection($this->category_service->getCategoriesLevel1());
-    }
-
-    public function getCategoriesLevel2(Request $request)
-    {
-        return CategoryResource::collection($this->category_service->getCategoriesLevel2($request->parent_id));
+        return CategoryResource::collection($this->category_service->getCategories($request->parent_id));
     }
 
     public function searchCategories(Request $request)

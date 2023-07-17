@@ -14,7 +14,6 @@ class CompactProductResource extends JsonResource
      */
     public function toArray($request)
     {
-        info($this->images);
         return [
             "slug" => $this->slug,
             "name" => $this->name,

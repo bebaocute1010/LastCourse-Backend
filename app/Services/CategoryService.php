@@ -13,17 +13,29 @@ class CategoryService
         $this->category_repository = new CategoryRepository();
     }
 
-    public function getCategoriesLevel1()
+    public function getCategoryFamily($category)
     {
-        return $this->category_repository->getCategoriesLevel1();
+        $categories = [$this->getSubCategories($category->id)] ?? [];
+        $categories_selected = [];
+        while ($category != null) {
+            array_unshift($categories_selected, $category->id);
+            array_unshift($categories, $this->getCategories($category->parent_id));
+            $category = $category->parent;
+        }
+        // $categories = collect($categories)->map(function ($category) {
+        //     $group_categories
+        // })
+        return ["categories" => $categories, "categories_selected" => $categories_selected];
     }
 
-    public function getCategoriesLevel2($parent_id = null)
+    public function getSubCategories($cat_id)
     {
-        if (!$parent_id) {
-            return collect([]);
-        }
-        return $this->category_repository->getCategoriesLevel2($parent_id);
+        return $this->category_repository->getCategories($cat_id);
+    }
+
+    public function getCategories($parent_id = null)
+    {
+        return $this->category_repository->getCategories($parent_id);
     }
 
     public function searchCategories($search)

@@ -37,9 +37,10 @@ class ProductInforResource extends JsonResource
 
         $discount_ranges = $this->discountRanges;
         return [
+            "categories" => $this->categories,
+            "categories_selected" => $this->categories_selected,
             "images" => $this->images,
-            "cat_lv1_id" => $parent ? $parent->id : $category->id,
-            "cat_lv2_id" => $parent ? $category->id : null,
+            "cat_id" => $this->cat_id,
             "condition_id" => $this->condition->id,
             "is_variant" => $this->is_variant ? true : false,
             "is_buy_more_discount" => $this->is_buy_more_discount ? true : false,

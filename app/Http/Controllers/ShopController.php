@@ -8,6 +8,7 @@ use App\Http\Resources\ProductInforResource;
 use App\Http\Resources\ProductShopResource;
 use App\Http\Resources\ShopInforResource;
 use App\Http\Resources\ShopProfileResource;
+use App\Services\CategoryService;
 use App\Services\FollowerService;
 use App\Services\ProductService;
 use App\Services\ShopService;
@@ -18,6 +19,7 @@ use Illuminate\Http\Request;
 class ShopController extends Controller
 {
     private $shop_service;
+    private $category_service;
     private $bill_ctl;
     private $product_service;
     private $follower_service;
@@ -25,6 +27,7 @@ class ShopController extends Controller
     public function __construct()
     {
         $this->shop_service = new ShopService();
+        $this->category_service = new CategoryService();
         $this->product_service = new ProductService();
         $this->follower_service = new FollowerService();
         $this->bill_ctl = new BillController;
@@ -62,6 +65,9 @@ class ShopController extends Controller
     public function getProduct(Request $request)
     {
         if ($product = $this->product_service->find($request->id)) {
+            $category_family = $this->category_service->getCategoryFamily($product->category);
+            $product->categories = $category_family["categories"];
+            $product->categories_selected = $category_family["categories_selected"];
             if ($product->shop_id == auth()->user()->shop->id) {
                 return new ProductInforResource($product);
             }
