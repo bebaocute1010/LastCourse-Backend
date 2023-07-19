@@ -89,7 +89,7 @@ Route::prefix("shop")->controller(ShopController::class)->middleware("auth:api")
 Route::prefix("cart")->controller(CartController::class)->middleware("auth:api")->group(function () {
     Route::post("create", "updateOrCreate");
     Route::post("update", "updateOrCreate");
-    Route::delete("delete", "delete");
+    Route::post("delete", "delete");
 
     Route::post("preview-order", "previewOrder");
     Route::get("get", "getProducts");
