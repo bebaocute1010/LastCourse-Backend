@@ -114,6 +114,7 @@ class ProductController extends Controller
                 $request->sort_newest ?? false,
                 $request->sort_sell ?? false,
                 $request->sort_desc_price ?? null,
+                $request->type ?? null,
             )
         );
     }
@@ -139,6 +140,7 @@ class ProductController extends Controller
             if ($product = $this->product_service->getDetails($slug)) {
                 return new ProductResource($product);
             }
+            return JsonResponse::error("Không có sản phẩm này", JsonResponse::HTTP_BAD_REQUEST);
         }
         return JsonResponse::error("Fail", JsonResponse::HTTP_BAD_REQUEST);
     }

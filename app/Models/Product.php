@@ -108,7 +108,7 @@ class Product extends Model
 
     public function allComments()
     {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(Comment::class)->orderByDesc("created_at");
     }
 
     public function getAverageRating()

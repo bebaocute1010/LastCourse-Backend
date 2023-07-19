@@ -7,20 +7,17 @@ use App\Models\Product;
 class ProductRepository
 {
     public function searchProducts(
-        array $keywords,
+        string $keywords,
         array $filter_cats = null,
         $filter_price_min = null,
         $filter_price_max = null,
         $filter_rating = null,
         bool $sort_newest = false,
         bool $sort_sell = false,
-        bool $sort_desc_price = null
+        bool $sort_desc_price = null,
+        $type
     ) {
-        $products = Product::where(function ($query) use ($keywords) {
-            foreach ($keywords as $keyword) {
-                $query->orWhere("name", "like", "%" . $keyword . "%");
-            }
-        })
+        $products = Product::where("name", "like", "%" . $keywords . "%")
             ->when($filter_cats != null, function ($query) use ($filter_cats) {
                 $query->whereIn("cat_id", $filter_cats);
             })
@@ -39,13 +36,18 @@ class ProductRepository
             ->when($sort_newest, function ($query) {
                 $query->orderByDesc("created_at");
             })
-            ->when($sort_sell, function ($query) {
+            ->when($sort_sell || $type == 3, function ($query) {
                 $query->orderByDesc("sold");
             })
             ->when($sort_desc_price !== null, function ($query) use ($sort_desc_price) {
                 $query->orderBy("price", $sort_desc_price ? "desc" : "asc");
             })
             ->get();
+        if ($type == 2) {
+            return $products->sortByDesc(function ($product) {
+                return $product->getTotalRating();
+            });
+        }
         return $products;
     }
 
