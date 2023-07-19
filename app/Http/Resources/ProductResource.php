@@ -66,6 +66,7 @@ class ProductResource extends JsonResource
                 "star_4" => $this->filterRating(4)->count(),
                 "star_5" => $this->filterRating(5)->count(),
             ],
+            "breadcrumb" => $this->breadcrumb,
         ];
     }
 }

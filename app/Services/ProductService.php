@@ -25,6 +25,27 @@ class ProductService
         $this->uploader = new Uploader();
     }
 
+    public function getProductsCategory($cat_id = null)
+    {
+        return $this->product_repository->getProductsCategory($cat_id);
+    }
+
+    public function getBreadcrumb($product)
+    {
+        $category_family = $this->category_service->getCategoryFamily($product->category);
+        $categories_selected = $category_family["categories_selected"];
+        $breadcrumb = [];
+        foreach ($category_family["categories"] as $category) {
+            $filter_categories = array_filter($category->toArray(), function ($item) use ($categories_selected) {
+                return in_array($item["id"], $categories_selected);
+            });
+
+            $breadcrumb = array_merge($breadcrumb, $filter_categories);
+        }
+        $breadcrumb[] = ["id" => -1, "name" => $product->name];
+        return $breadcrumb;
+    }
+
     public function findBySlug(string $slug)
     {
         return $this->product_repository->findBySlug($slug);
@@ -39,12 +60,16 @@ class ProductService
         $filter_rating = null,
         bool $sort_newest = false,
         bool $sort_sell = false,
-        bool $sort_desc_price = null
+        bool $sort_desc_price = null,
+        $type,
     ) {
         $per_page = 12;
-        $key_words = $search ? explode(" ", $search) : [];
+        if ($filter_cats) {
+            $categories = $this->category_service->getCategoriesInArray($filter_cats);
+            $filter_cats = $this->getSubCategories($categories);
+        }
         $products = $this->product_repository->searchProducts(
-            $key_words,
+            $search,
             $filter_cats,
             $filter_price_min,
             $filter_price_max,
@@ -52,12 +77,24 @@ class ProductService
             $sort_newest,
             $sort_sell,
             $sort_desc_price,
+            $type
         );
         $num_page = ceil($products->count() / $per_page);
         $data["num_page"] = $num_page;
         $data["products"] = $products->slice(($page - 1) * $per_page, $per_page);
         $data["categories"] = $this->category_service->searchCategories($search);
         return $data;
+    }
+
+    public function getSubCategories($categories, $cat_ids = [])
+    {
+        foreach ($categories as $category) {
+            if ($subCats = $category->subCategories) {
+                $cat_ids = array_merge($cat_ids, $this->getSubCategories($subCats, $cat_ids));
+            }
+            $cat_ids[] = $category->id;
+        }
+        return array_unique($cat_ids);
     }
 
     public function getRecommendedProducts($page)
@@ -78,6 +115,7 @@ class ProductService
     public function getDetails($slug)
     {
         if ($product = $this->product_repository->getDetails($slug)) {
+            $product->breadcrumb = $this->getBreadcrumb($product);
             return $product;
         }
         return false;
@@ -134,21 +172,7 @@ class ProductService
             if ($product->shop_id != $data["shop_id"]) {
                 return false;
             }
-            // $old_image_ids = $product->image_ids;
-            // foreach ($old_image_ids as $key => $id) {
-            //     if (!in_array($id, $data["image_ids"])) {
-            //         $this->uploader->delete($id);
-            //     }
-            // }
-            // $color_image_ids = $this->findImageIds($data["variant_images"][0] ?? []);
-            // $size_image_ids = $this->findImageIds($data["variant_images"][1] ?? []);
             foreach ($product->variants as $variant) {
-                // if (!in_array($variant->color_image_id, $color_image_ids)) {
-                //     $this->uploader->delete($variant->color_image_id);
-                // }
-                // if (!in_array($variant->size_image_id, $size_image_ids)) {
-                //     $this->uploader->delete($variant->size_image_id);
-                // }
                 $variant->forceDelete();
             }
             foreach ($product->discountRanges as $discount) {
