@@ -95,12 +95,16 @@ class Product extends Model
             ->toArray();
     }
 
-    public function comments($page = null)
+    public function comments($page = null, $rating = null)
     {
         $per_page = 6;
         $offset = ($page - 1) * $per_page;
 
         return $this->hasMany(Comment::class)
+            ->with("user")
+            ->when($rating != null, function ($query) use ($rating) {
+                return $query->where("rating", $rating);
+            })
             ->orderBy("created_at", "desc")
             ->skip($offset)
             ->take($per_page)->get();
@@ -113,20 +117,8 @@ class Product extends Model
 
     public function getAverageRating()
     {
-        $evaluates = $this->evaluateComments();
-        return $this->getTotalRating() / $evaluates->count();
-    }
-
-    public function getTotalRating()
-    {
-        return $this->evaluateComments()->sum("rating");
-    }
-
-    public function evaluateComments()
-    {
-        return $this->allComments->filter(function ($comment) {
-            return $comment->comment_id === null;
-        });
+        $evaluates = $this->allComments;
+        return $evaluates->sum("rating") / $evaluates->count();
     }
 
     public function discountRanges()

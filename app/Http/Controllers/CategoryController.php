@@ -21,8 +21,13 @@ class CategoryController extends Controller
         return CategoryResource::collection($this->category_service->getSubCategories($request->parent_id));
     }
 
-    public function searchCategories(Request $request)
+    public function categoriesHome()
     {
-        return CategoryResource::collection($this->category_service->searchCategories($request->search));
+        return CategoryResource::collection($this->category_service->categoriesHome());
+    }
+
+    public function all()
+    {
+        return CategoryResource::collection($this->category_service->all());
     }
 }

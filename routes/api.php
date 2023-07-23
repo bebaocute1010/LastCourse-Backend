@@ -15,13 +15,15 @@ Route::prefix("get")->group(function () {
     Route::controller(AuthController::class)->middleware("auth:api")->group(function () {
         Route::prefix("notifications")->group(function () {
             Route::get("/", "getNotiifications");
+            Route::put("mark-read", "markReadNotification");
             Route::put("mark-read-all", "markReadAllNotifications");
         });
         Route::get("number-cart", "getNumberCart");
     });
 
     Route::controller(CategoryController::class)->prefix("category")->group(function () {
-        Route::get("search", "searchCategories");
+        Route::get("all", "all");
+        Route::get("categories-home", "categoriesHome");
         Route::get("categories", "getCategories");
     });
     Route::get("carriers", [CarrierController::class, "getCarriers"]);
@@ -36,7 +38,7 @@ Route::prefix("get")->group(function () {
     });
 
     Route::controller(ShopController::class)->group(function () {
-        Route::get("shop/{id}", "getShopProfile");
+        Route::get("shop", "getShopProfile");
     });
 });
 

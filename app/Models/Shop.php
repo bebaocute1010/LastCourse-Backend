@@ -32,6 +32,16 @@ class Shop extends Model
         return $this->hasMany(Product::class)->orderByDesc("updated_at");
     }
 
+    public function filterProducts($search = null)
+    {
+        return $this->hasMany(Product::class)
+            ->when($search, function ($query) use ($search) {
+                return $query->where("name", "like", "%" . $search . "%");
+            })
+            ->orderByDesc("created_at")
+            ->get();
+    }
+
     public function products($page = 1)
     {
         $per_page = 24;

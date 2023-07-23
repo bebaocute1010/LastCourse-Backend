@@ -60,7 +60,7 @@ class ProductService
         $filter_rating = null,
         bool $sort_newest = false,
         bool $sort_sell = false,
-        bool $sort_desc_price = null,
+        $sort_desc_price = null,
         $type,
     ) {
         $per_page = 12;
@@ -82,7 +82,6 @@ class ProductService
         $num_page = ceil($products->count() / $per_page);
         $data["num_page"] = $num_page;
         $data["products"] = $products->slice(($page - 1) * $per_page, $per_page);
-        $data["categories"] = $this->category_service->searchCategories($search);
         return $data;
     }
 

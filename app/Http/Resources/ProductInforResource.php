@@ -19,14 +19,22 @@ class ProductInforResource extends JsonResource
         $parent = $category->parent;
         $variants = $this->variants;
 
-        $colorImages = $variants->unique("color")->map(function ($variant) {
-            return $variant->color_image;
+        $colors = $variants->unique("color")->map(function ($variant) {
+            return [
+                "image" => $variant->color_image,
+                "color" => $variant->color,
+            ];
         })->values();
-        $sizeImages = $variants->unique("size")->map(function ($variant) {
-            return $variant->size_image;
+        $sizes = $variants->unique("size")->map(function ($variant) {
+            return [
+                "image" => $variant->size_image,
+                "size" => $variant->size,
+            ];
         })->values();
 
-        $groupedQuantities = $variants->groupBy("color")->map(function ($variants, $color) {
+        $column_group = ($colors->pluck("color")->count() <= 1 && $colors->pluck("color")[0] == null) ? "size" : "color";
+
+        $groupedQuantities = $variants->groupBy($column_group)->map(function ($variants, $color) use ($column_group, $sizes) {
             $prices = $variants->pluck("price")->toArray();
             $quantities = $variants->pluck("quantity")->toArray();
             return [
@@ -35,6 +43,16 @@ class ProductInforResource extends JsonResource
             ];
         });
 
+        $prices = $groupedQuantities->pluck("prices")->toArray();
+        $quantities = $groupedQuantities->pluck("quantities")->toArray();
+
+        if ($column_group == "color" && $sizes->pluck("size")->count() <= 1 && $sizes->pluck("size")[0] == null) {
+            $prices = [array_merge_recursive(...$prices), [null]];
+            $quantities = [array_merge_recursive(...$quantities), [null]];
+        } else if ($column_group == "size" && $colors->pluck("color")->count() <= 1 && $colors->pluck("color")[0] == null) {
+            $prices = [[null], array_merge_recursive(...$prices)];
+            $quantities = [[null], array_merge_recursive(...$quantities)];
+        }
         $discount_ranges = $this->discountRanges;
         return [
             "categories" => $this->categories,
@@ -55,10 +73,10 @@ class ProductInforResource extends JsonResource
             "length" => $this->length,
             "height" => $this->height,
             "width" => $this->width,
-            "variant_names" => [$this->colors(), $this->sizes()],
-            "variant_images" => [$colorImages, $sizeImages],
-            "variants_item_quantity" => $groupedQuantities->pluck("quantities")->toArray(),
-            "variants_item_price" => $groupedQuantities->pluck("prices")->toArray(),
+            "variant_names" => [$colors->pluck("color"), $sizes->pluck("size")],
+            "variant_images" => [$colors->pluck("image"), $sizes->pluck("image")],
+            "variants_item_quantity" => $prices,
+            "variants_item_price" => $quantities,
             "discount_ranges_min" => $discount_ranges->pluck("min"),
             "discount_ranges_max" => $discount_ranges->pluck("max"),
             "discount_ranges_amount" => $discount_ranges->pluck("amount"),

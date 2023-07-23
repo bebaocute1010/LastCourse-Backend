@@ -13,6 +13,16 @@ class CategoryService
         $this->category_repository = new CategoryRepository();
     }
 
+    public function categoriesHome()
+    {
+        return $this->category_repository->categoriesHome();
+    }
+
+    public function all()
+    {
+        return $this->category_repository->all();
+    }
+
     public function getCategoriesInArray(array $cat_ids)
     {
         return $this->category_repository->getCategoriesInArray($cat_ids);
@@ -33,11 +43,5 @@ class CategoryService
     public function getSubCategories($cat_id)
     {
         return $this->category_repository->getSubCategories($cat_id);
-    }
-
-    public function searchCategories($search)
-    {
-        $keywords = $search ? str_split($search) : [];
-        return $this->category_repository->searchCategories($keywords);
     }
 }

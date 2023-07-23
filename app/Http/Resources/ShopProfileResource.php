@@ -23,8 +23,7 @@ class ShopProfileResource extends JsonResource
             "followers" => $this->followers->count(),
             "rating" => $this->rating,
             "products_count" => $products_count,
-            "num_page" => ceil($products_count / 24),
-            "products" => CompactProductResource::collection($this->products()),
+            "products" => CompactProductResource::collection($this->products),
             "is_followed" => $this->is_followed,
         ];
     }

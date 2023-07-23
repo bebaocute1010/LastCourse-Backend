@@ -15,6 +15,7 @@ use App\Services\ShopService;
 use App\Utils\MessageResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 
 class ShopController extends Controller
 {
@@ -49,12 +50,14 @@ class ShopController extends Controller
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }
 
-    public function getShopProfile($id)
+    public function getShopProfile(Request $request)
     {
-        if ($shop = $this->shop_service->find($id)) {
+        if ($shop = $this->shop_service->findBySlug($request->slug)) {
             $shop->is_followed = $this->follower_service->checkFollowed($shop->id);
+            $shop->products = $shop->filterProducts($request->search);
             return new ShopProfileResource($shop);
         }
+        return JsonResponse::error("Không tìm thấy shop.", JsonResponse::HTTP_CONFLICT);
     }
 
     public function getInforShop()
@@ -89,11 +92,11 @@ class ShopController extends Controller
         return $this->bill_ctl->getBills($request, true);
     }
 
-    public function updateOrCreate(CreateShopRequest $request)
+    public function updateOrCreate(CreateShopRequest $request, Route $route)
     {
         $data_validated = $request->validated();
         $data_validated["user_id"] = auth()->id();
-        if ($request->id) {
+        if (str_ends_with($route->uri, "update")) {
             if ($this->shop_service->update($request->id, $data_validated)) {
                 return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::SHOP_UPDATE_SUCCESS);
             }

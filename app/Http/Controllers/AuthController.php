@@ -18,6 +18,7 @@ use App\Utils\MessageResource;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -30,6 +31,13 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->auth_service = new AuthService();
+    }
+
+    public function markReadNotification(Request $request)
+    {
+        if ($request->id != null) {
+            DB::update('update notifications set read_at = ? where id = ?', [now(), $request->id]);
+        }
     }
 
     public function resetPassword(ResetPasswordRequest $request)

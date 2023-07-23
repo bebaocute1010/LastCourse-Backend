@@ -18,6 +18,7 @@ class ProductShopResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
+            "slug" => $this->slug,
             "image" => $this->images[0] ?? null,
             "price" => $this->price,
             "status" => $this->is_hidden ? Product::STATUS_HIDDEN

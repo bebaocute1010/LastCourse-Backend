@@ -28,13 +28,14 @@ class BillService
 
     public function getFilterBill($bills, $search_string)
     {
-        $keywords = explode(" ", strtolower($search_string));
-
-        $filtered_bills = $bills->filter(function ($bill) use ($keywords) {
-            foreach ($keywords as $keyword) {
-                if (str_contains(strtolower($bill->receiver), $keyword) || str_contains($bill->phone, $keyword) || str_contains(strtolower($bill->address), $keyword)) {
-                    return true;
-                }
+        $filtered_bills = $bills->filter(function ($bill) use ($search_string) {
+            if (
+                str_contains(strtolower($bill->receiver), $search_string)
+                || str_contains($bill->phone, $search_string)
+                || str_contains(strtolower($bill->address), $search_string)
+                || $bill->products->count() > 0
+            ) {
+                return true;
             }
             return false;
         })->values();

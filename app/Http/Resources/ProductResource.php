@@ -24,8 +24,9 @@ class ProductResource extends JsonResource
         $shop = $this->shop;
         $all_comments = $this->allComments;
         $shop_rating_count = 0;
-        foreach ($shop->allProducts as $product) {
-            $shop_rating_count += $product->evaluateComments()->count();
+        $allProducts = $shop->allProducts()->with("allComments")->get();
+        foreach ($allProducts as $product) {
+            $shop_rating_count += $product->allComments->count();
         }
         return [
             "id" => $this->id,
@@ -41,8 +42,8 @@ class ProductResource extends JsonResource
                 return ["url" => $image];
             }),
             "shop" => [
-                "id" => $shop->id,
                 "name" => $shop->name,
+                "slug" => $shop->slug,
                 "locate" => $shop->locate,
                 "avatar" => $shop->avatar,
                 "product_count" => $shop->allProducts->count(),
@@ -59,12 +60,12 @@ class ProductResource extends JsonResource
             ],
             "relate_products" => CompactProductResource::collection($this->relates()),
             "rating_count" => [
-                "all" => $this->filterRating()->count(),
-                "star_1" => $this->filterRating(1)->count(),
-                "star_2" => $this->filterRating(2)->count(),
-                "star_3" => $this->filterRating(3)->count(),
-                "star_4" => $this->filterRating(4)->count(),
-                "star_5" => $this->filterRating(5)->count(),
+                $this->filterRating()->count(),
+                $this->filterRating(1)->count(),
+                $this->filterRating(2)->count(),
+                $this->filterRating(3)->count(),
+                $this->filterRating(4)->count(),
+                $this->filterRating(5)->count(),
             ],
             "breadcrumb" => $this->breadcrumb,
         ];

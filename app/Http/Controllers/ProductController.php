@@ -92,7 +92,7 @@ class ProductController extends Controller
     {
 
         if ($product = $this->product_service->findBySlug($slug)) {
-            return CommentResource::collection($product->comments($request->page));
+            return CommentResource::collection($product->comments($request->page, $request->rating));
         }
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }

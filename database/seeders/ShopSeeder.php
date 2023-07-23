@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Shop;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Nette\Utils\Random;
 
 class ShopSeeder extends Seeder
@@ -111,6 +112,7 @@ class ShopSeeder extends Seeder
                     "user_id" => $i,
                     "carrier_id" => random_int(1, 11),
                     "name" => "SHOP " . $i,
+                    "slug" => Str::slug("SHOP " . $i . " " . Str::random(10)),
                     "email" => "shop" . $i . "@gmail.com",
                     "warehouse" => Arr::random($warehouses),
                     "avatar" => Arr::random($avatars),

@@ -25,7 +25,18 @@ class BillController extends Controller
     {
         if ($bill = $this->bill_service->find($request->id)) {
             if ($bill->user_id == auth()->id() || $bill->shop_id == auth()->user()->shop->id) {
-                return BillDetailResource::collection($bill->details);
+                $details = BillDetailResource::collection($bill->details);
+                $detailsArray = [];
+                foreach ($details as $detail) {
+                    $detailsArray[] = $detail->toArray($request);
+                }
+                $result = [
+                    "code" => "#" . $bill->code,
+                    "total" => $bill->total,
+                    "shipping_fee" => $bill->shipping_fee,
+                    "details" => $detailsArray,
+                ];
+                return JsonResponse::successWithData($result);
             }
         }
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
@@ -33,10 +44,19 @@ class BillController extends Controller
 
     public function getBills(Request $request, $is_shop = null)
     {
+        $search = $request->search ?? "";
         if (!$is_shop) {
-            $bills = auth()->user()->bills;
+            $bills = auth()->user()->bills()->with("details")->with([
+                'products' => function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%");
+                },
+            ])->get();
         } else {
-            $bills = auth()->user()->shop->bills;
+            $bills = auth()->user()->shop->bills()->with("details")->with([
+                'products' => function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%");
+                },
+            ])->get();
         }
         if ($search_string = $request->search) {
             return BillResource::collection($this->bill_service->getFilterBill($bills, $search_string));

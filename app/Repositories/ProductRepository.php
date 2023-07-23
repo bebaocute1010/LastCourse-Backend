@@ -14,13 +14,10 @@ class ProductRepository
         $filter_rating = null,
         bool $sort_newest = false,
         bool $sort_sell = false,
-        bool $sort_desc_price = null,
+        $sort_desc_price,
         $type
     ) {
         $products = Product::where("name", "like", "%" . $keywords . "%")
-            ->when($filter_cats != null, function ($query) use ($filter_cats) {
-                $query->whereIn("cat_id", $filter_cats);
-            })
             ->when($filter_price_min != null, function ($query) use ($filter_price_min) {
                 $query->where("price", ">=", $filter_price_min);
             })
@@ -39,13 +36,14 @@ class ProductRepository
             ->when($sort_sell || $type == 3, function ($query) {
                 $query->orderByDesc("sold");
             })
-            ->when($sort_desc_price !== null, function ($query) use ($sort_desc_price) {
-                $query->orderBy("price", $sort_desc_price ? "desc" : "asc");
+            ->when($sort_desc_price != null, function ($query) use ($sort_desc_price) {
+                $query->orderBy("price", $sort_desc_price == "true" ? "desc" : "asc");
             })
+            ->with("allComments")
             ->get();
         if ($type == 2) {
             return $products->sortByDesc(function ($product) {
-                return $product->getTotalRating();
+                return $product->allComments->sum("rating");
             });
         }
         return $products;
@@ -77,11 +75,12 @@ class ProductRepository
         return Product::orderByDesc("sold")->take(12)->get();
     }
 
-    public function getFeaturedProducts()
+    public function getFeaturedProducts($page = 1)
     {
-        return Product::all()->sortByDesc(function ($product) {
-            return $product->getTotalRating();
-        })->take(12);
+        $offset = ($page - 1) * 12;
+        return Product::with("allComments")->get()->sortByDesc(function ($product) {
+            return $product->allComments->sum("rating");
+        })->skip($offset)->take(12);
     }
 
     public function find($id)
@@ -96,7 +95,7 @@ class ProductRepository
 
     public function getDetails($slug)
     {
-        return Product::with(['variants'])->where('slug', $slug)->first();
+        return Product::with(["variants", "allComments"])->where("slug", $slug)->first();
     }
 
     public function updateOrCreate(array $data)

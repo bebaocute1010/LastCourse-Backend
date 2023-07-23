@@ -16,6 +16,8 @@ class BillResource extends JsonResource
     {
         return [
             "id" => $this->id,
+            "code" => "#" . $this->code,
+            "image" => $this->products->first()->images[0],
             "receiver" => $this->receiver,
             "phone" => $this->phone,
             "address" => $this->address,

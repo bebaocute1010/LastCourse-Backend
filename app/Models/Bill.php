@@ -25,9 +25,15 @@ class Bill extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function products()
+    public function products($search = null)
     {
-        return $this->hasManyThrough(Product::class, BillDetail::class);
+        $query = $this->hasManyThrough(Product::class, BillDetail::class, 'bill_id', 'id', 'id', 'product_id');
+
+        if ($search !== null) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        return $query;
     }
 
     public function details()

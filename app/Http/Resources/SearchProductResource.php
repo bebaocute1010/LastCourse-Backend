@@ -17,7 +17,6 @@ class SearchProductResource extends JsonResource
         return [
             "num_page" => $this["num_page"],
             "products" => CompactProductResource::collection($this["products"]),
-            "categories" => CategoryResource::collection($this["categories"]),
         ];
     }
 }

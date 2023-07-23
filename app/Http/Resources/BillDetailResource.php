@@ -23,6 +23,7 @@ class BillDetailResource extends JsonResource
             "price" => $this->price,
             "variant" => $variant ? $this->getVariantString($variant) : "-",
             "quantity" => $this->quantity,
+            "cost" => $this->price * $this->quantity,
             "have_evaluated" => $this->bill->status != Bill::STATUS_SUCCESS ? false : ($this->comment() ? true : null),
         ];
     }

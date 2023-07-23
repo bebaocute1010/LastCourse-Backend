@@ -34,7 +34,7 @@ class CreateBillNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ["mail", "database"];
+        return ["database", "mail"];
     }
 
     /**
@@ -45,13 +45,14 @@ class CreateBillNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
+        $url = env("FE_URL") . ($this->is_shop ? "shop/don-hang/quan-ly" : "don-hang-cua-toi");
         $mail_message = new MailMessage();
         $mail_message
             ->subject("Đơn hàng #" . $this->bill->code)
             ->greeting("Xin chào, " . ($this->is_shop ? $notifiable->name : $notifiable->fullname) . "!")
             ->line($this->is_shop ? "Bạn có đơn hàng mới #" . $this->bill->code : "Bạn vừa tạo đơn hàng #" . $this->bill->code)
             ->line("Ghi chú: " . $this->bill->note)
-            ->action("Xem đơn hàng", env("FE_APP_URL") . ($this->is_shop ? "shop/don-hang/quan-ly" : "don-hang-cua-toi"))
+            ->action("Xem đơn hàng", $url)
             ->line("Cảm ơn bạn! Chúc bạn mua sắm vui vẻ tại M-Clothing");
         return $mail_message;
     }
@@ -70,6 +71,8 @@ class CreateBillNotification extends Notification implements ShouldQueue
             "message" => $this->is_shop ?
             "Bạn có đơn hàng mới, mã đơn hàng #" . $this->bill->code . "."
             : "Bạn đã tạo thành công đơn hàng #" . $this->bill->code . ".",
+            "code" => $this->bill->code,
+            "type" => $this->is_shop ? "shop" : "user",
         ];
     }
 }
