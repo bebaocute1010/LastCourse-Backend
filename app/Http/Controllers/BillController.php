@@ -32,7 +32,8 @@ class BillController extends Controller
                 }
                 $result = [
                     "code" => "#" . $bill->code,
-                    "total" => $bill->total,
+                    "note" => $bill->note,
+                    "total" => $bill->total - $bill->shipping_fee,
                     "shipping_fee" => $bill->shipping_fee,
                     "details" => $detailsArray,
                 ];

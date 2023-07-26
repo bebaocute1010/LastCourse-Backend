@@ -32,10 +32,11 @@ class ProductResource extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "price" => $this->price,
+            "promotional_price" => $this->promotional_price,
             "rating" => $this->rating,
             "sold" => $this->sold,
-            "colors" => $colors->unique("name"),
-            "sizes" => $sizes->unique("name"),
+            "colors" => $colors->unique("name")->toArray(),
+            "sizes" => $sizes->unique("name")->toArray(),
             "inventory" => $this->inventory,
             "is_variant" => $this->is_variant ? true : null,
             "images" => collect($this->images)->map(function ($image) {
@@ -52,7 +53,7 @@ class ProductResource extends JsonResource
                 "rating_count" => $shop_rating_count,
             ],
             "category" => $this->category->name,
-            "address" => $this->warehouse,
+            "address" => $shop->warehouse,
             "detail" => str_replace("\n", "<br/>", $this->detail),
             "comments" => [
                 "num_page" => ceil($all_comments->count() / 6),

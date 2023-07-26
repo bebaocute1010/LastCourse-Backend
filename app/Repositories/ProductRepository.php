@@ -18,6 +18,7 @@ class ProductRepository
         $type
     ) {
         $products = Product::where("name", "like", "%" . $keywords . "%")
+            ->whereNull("is_hidden")
             ->when($filter_price_min != null, function ($query) use ($filter_price_min) {
                 $query->where("price", ">=", $filter_price_min);
             })
@@ -54,7 +55,7 @@ class ProductRepository
         $products = collect([]);
         $per_page = 12;
         if (auth()->check()) {
-            $cat_ids = auth()->user()->allProducts()->pluck("cat_id");
+            $cat_ids = auth()->user()->allProducts()->pluck("cat_id")->unique();
 
             $products = Product::whereIn("cat_id", function ($query) use ($cat_ids) {
                 $query->select("id")
@@ -62,23 +63,31 @@ class ProductRepository
                     ->whereIn("id", $cat_ids)
                     ->orWhereIn("parent_id", $cat_ids);
             })
+                ->whereNull("is_hidden")
                 ->orderByDesc("sold")
                 ->get();
         }
-        $all_products = Product::orderByDesc("sold")->get();
+        $all_products = Product::orderByDesc("sold")
+            ->whereNull("is_hidden")
+            ->get();
         $result = $products->concat($all_products)->unique()->slice(($page - 1) * $per_page, $per_page);
         return $result;
     }
 
     public function getTopSellingProducts()
     {
-        return Product::orderByDesc("sold")->take(12)->get();
+        return Product::orderByDesc("sold")
+            ->whereNull("is_hidden")
+            ->take(12)
+            ->get();
     }
 
     public function getFeaturedProducts($page = 1)
     {
         $offset = ($page - 1) * 12;
-        return Product::with("allComments")->get()->sortByDesc(function ($product) {
+        return Product::with("allComments")
+            ->whereNull("is_hidden")
+            ->get()->sortByDesc(function ($product) {
             return $product->allComments->sum("rating");
         })->skip($offset)->take(12);
     }
@@ -100,6 +109,7 @@ class ProductRepository
 
     public function updateOrCreate(array $data)
     {
+        info($data);
         if (isset($data["id"])) {
             $product = $this->find($data["id"]);
             $product->update($data);

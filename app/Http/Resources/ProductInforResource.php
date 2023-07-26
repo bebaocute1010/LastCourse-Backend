@@ -32,7 +32,7 @@ class ProductInforResource extends JsonResource
             ];
         })->values();
 
-        $column_group = ($colors->pluck("color")->count() <= 1 && $colors->pluck("color")[0] == null) ? "size" : "color";
+        $column_group = ($colors->pluck("color")->count() <= 1 && isset($colors->pluck("color")[0]) && $colors->pluck("color")[0] == null) ? "size" : "color";
 
         $groupedQuantities = $variants->groupBy($column_group)->map(function ($variants, $color) use ($column_group, $sizes) {
             $prices = $variants->pluck("price")->toArray();
@@ -46,10 +46,10 @@ class ProductInforResource extends JsonResource
         $prices = $groupedQuantities->pluck("prices")->toArray();
         $quantities = $groupedQuantities->pluck("quantities")->toArray();
 
-        if ($column_group == "color" && $sizes->pluck("size")->count() <= 1 && $sizes->pluck("size")[0] == null) {
+        if ($column_group == "color" && $sizes->pluck("size")->count() <= 1 && (!isset($colors->pluck("size")[0]) || $sizes->pluck("size")[0] == null)) {
             $prices = [array_merge_recursive(...$prices), [null]];
             $quantities = [array_merge_recursive(...$quantities), [null]];
-        } else if ($column_group == "size" && $colors->pluck("color")->count() <= 1 && $colors->pluck("color")[0] == null) {
+        } else if ($column_group == "size" && $colors->pluck("color")->count() <= 1 && (!isset($colors->pluck("color")[0]) && $colors->pluck("color")[0] == null)) {
             $prices = [[null], array_merge_recursive(...$prices)];
             $quantities = [[null], array_merge_recursive(...$quantities)];
         }
@@ -75,8 +75,8 @@ class ProductInforResource extends JsonResource
             "width" => $this->width,
             "variant_names" => [$colors->pluck("color"), $sizes->pluck("size")],
             "variant_images" => [$colors->pluck("image"), $sizes->pluck("image")],
-            "variants_item_quantity" => $prices,
-            "variants_item_price" => $quantities,
+            "variants_item_quantity" => $quantities,
+            "variants_item_price" => $prices,
             "discount_ranges_min" => $discount_ranges->pluck("min"),
             "discount_ranges_max" => $discount_ranges->pluck("max"),
             "discount_ranges_amount" => $discount_ranges->pluck("amount"),

@@ -81,8 +81,8 @@ class CommentFactory extends Factory
             $images[] = $this->faker->randomElement($comment_images);
         }
         return [
-            "bill_id" => $this->faker->numberBetween(1, 1000),
-            "product_id" => $this->faker->numberBetween(1, 320),
+            "bill_id" => $this->faker->numberBetween(1, 5000),
+            "product_id" => $this->faker->numberBetween(1, 1069),
             "user_id" => $this->faker->numberBetween(1, 50),
             "images" => $images,
             "content" => $this->faker->randomElement($customer_reviews),

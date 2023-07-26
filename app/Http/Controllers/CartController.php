@@ -37,21 +37,21 @@ class CartController extends Controller
         $data_validated = $request->validated();
         $data_validated["user_id"] = auth()->id();
         if ($request->id) {
-            if ($cart = $this->cart_service->update($request->id, $request["quantity"])) {
-                return response()->json([
-                    "title" => MessageResource::DEFAULT_SUCCESS_TITLE,
-                    "message" => MessageResource::CART_UPDATE_PRODUCT_SUCCESS,
-                    "id" => $cart->id,
-                ]);
-            }
+            $cart = $this->cart_service->update($request->id, $request["quantity"]);
         } else {
-            if ($cart = $this->cart_service->create($data_validated)) {
-                return response()->json([
-                    "title" => MessageResource::DEFAULT_SUCCESS_TITLE,
-                    "message" => MessageResource::CART_ADD_PRODUCT_SUCCESS,
-                    "id" => $cart->id,
-                ]);
-            }
+            $cart = $this->cart_service->create($data_validated);
+        }
+        if ($cart) {
+            return response()->json([
+                "title" => MessageResource::DEFAULT_SUCCESS_TITLE,
+                "message" => $request->id != null ? MessageResource::CART_UPDATE_PRODUCT_SUCCESS : MessageResource::CART_ADD_PRODUCT_SUCCESS,
+                "id" => $cart->id,
+            ]);
+        } else if ($cart == null) {
+            return response()->json([
+                "title" => MessageResource::DEFAULT_FAIL_TITLE,
+                "message" => "Không thể vượt quá số lượng tồn kho",
+            ], JsonResponse::HTTP_CONFLICT);
         }
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }

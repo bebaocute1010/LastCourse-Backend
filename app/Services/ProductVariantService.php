@@ -17,6 +17,11 @@ class ProductVariantService
         $this->uploader = new Uploader();
     }
 
+    public function find($id)
+    {
+        return $this->product_variant_repository->find($id);
+    }
+
     public function create(array $data)
     {
         $colors = $data["variant_names"][0] ?? null;

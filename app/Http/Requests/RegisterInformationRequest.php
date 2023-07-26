@@ -31,7 +31,7 @@ class RegisterInformationRequest extends FormRequest
             "avatar" => "nullable|string|max:500",
             "birthday" => "required|date",
             "gender" => "required|numeric",
-            "introduced_code" => "nullable|string|digits:10",
+            "introduced_code" => "nullable|string",
         ];
     }
 }

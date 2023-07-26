@@ -65,23 +65,27 @@ class ProductController extends Controller
 
     public function getVariantQuantity($slug, Request $request)
     {
-        $variants = $this->product_service->findBySlug($slug)->filterVariants($request->color, $request->size) ?? null;
+        $product = $this->product_service->findBySlug($slug);
+        $variants = $product->filterVariants($request->color, $request->size) ?? null;
         if ($variants) {
+            $sum = $product->inventory;
+            $price = $product->price;
             if ($request->color && !$request->size) {
                 $sum = $variants->groupBy("size")->map(function ($group) {
                     $quantity = $group->sum("quantity");
                     return ["name" => $group->first()->size, "quantity" => $quantity];
                 })->values()->sum("quantity");
             } else {
-
                 $sum = $variants->groupBy("color")->map(function ($group) {
                     $quantity = $group->sum("quantity");
                     return ["name" => $group->first()->color, "quantity" => $quantity];
                 })->values()->sum("quantity");
             }
-            $data = ["inventory" => $sum];
+            $data = ["inventory" => $sum, "price" => $price, "promotional_price" => $product->promotional_price];
             if ($variants->count() == 1) {
                 $data["product_variant_id"] = $variants->first()->id;
+                $data["price"] = $variants->first()->price;
+                $data["promotional_price"] = null;
             }
             return JsonResponse::successWithData($data);
         }
@@ -136,13 +140,14 @@ class ProductController extends Controller
 
     public function getDetails($slug)
     {
-        if ($slug) {
-            if ($product = $this->product_service->getDetails($slug)) {
-                return new ProductResource($product);
-            }
-            return JsonResponse::error("Không có sản phẩm này", JsonResponse::HTTP_BAD_REQUEST);
+        if (!$slug) {
+            return JsonResponse::error("Fail", JsonResponse::HTTP_BAD_REQUEST);
         }
-        return JsonResponse::error("Fail", JsonResponse::HTTP_BAD_REQUEST);
+        $product = $this->product_service->getDetails($slug);
+        if (!$product || $product->is_hidden != null) {
+            return JsonResponse::error("Sản phẩm này không tồn tại hoặc đã ẩn.", JsonResponse::HTTP_BAD_REQUEST);
+        }
+        return new ProductResource($product);
     }
 
     public function delete(Request $request)

@@ -45,7 +45,7 @@ class CreateBillNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $url = env("FE_URL") . ($this->is_shop ? "shop/don-hang/quan-ly" : "don-hang-cua-toi");
+        $url = env("FE_URL") . ($this->is_shop ? "shop/don-hang/quan-ly" : "don-hang-cua-toi") . "?code=" . $this->bill->code;
         $mail_message = new MailMessage();
         $mail_message
             ->subject("Đơn hàng #" . $this->bill->code)

@@ -45,7 +45,7 @@ class UpdateStatusBillNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $url = env("FE_URL") . ($this->is_shop ? "shop/don-hang/quan-ly" : "don-hang-cua-toi");
+        $url = env("FE_URL") . ($this->is_shop ? "shop/don-hang/quan-ly" : "don-hang-cua-toi") . "?code=" . $this->bill->code;
         info($url);
         return (new MailMessage)
             ->subject("Đơn hàng #" . $this->bill->code)
