@@ -7,10 +7,14 @@ use App\Repositories\CartRepository;
 class CartService
 {
     private $cart_repository;
+    private $product_service;
+    private $product_variant_service;
 
     public function __construct()
     {
         $this->cart_repository = new CartRepository();
+        $this->product_service = new ProductService();
+        $this->product_variant_service = new ProductVariantService();
     }
 
     public function findCarts(array $cart_ids)
@@ -37,14 +41,35 @@ class CartService
     public function create(array $data)
     {
         if ($cart = $this->cart_repository->find(null, $data["user_id"], $data["product_id"], $data["product_variant_id"])) {
-            $quantity = $data["quantity"] + $cart->quantity;
-            return $this->update($cart->id, $quantity);
+            $data["quantity"] += $cart->quantity;
+        }
+        if ($cart) {
+            return $this->update($cart->id, $data["quantity"]);
+        }
+        $product = $this->product_service->find($data["product_id"]);
+        $variant = isset($data["product_variant_id"]) ? $this->product_variant_service->find($data["product_variant_id"]) : null;
+        if ($this->isOutInventory($product, $data["quantity"], $variant)) {
+            return null;
         }
         return $this->cart_repository->create($data);
     }
 
     public function update($id, $quantity)
     {
+        $cart = $this->cart_repository->find($id);
+        if ($this->isOutInventory($cart->product, $quantity, $cart->variant)) {
+            return null;
+        }
         return $this->cart_repository->update($id, $quantity);
+    }
+
+    private function isOutInventory($product, $quantity, $variant = null)
+    {
+        $inventory = (
+            $variant != null
+            ? $variant->quantity
+            : $product->inventory
+        );
+        return $quantity > $inventory;
     }
 }

@@ -30,6 +30,7 @@ class CreateShopRequest extends FormRequest
             "locate" => "required|string|max:255",
             "avatar" => "required",
             "banner" => "required",
+            "warehouse" => "required|string",
         ];
     }
 }

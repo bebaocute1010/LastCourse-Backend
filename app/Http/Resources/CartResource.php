@@ -19,13 +19,18 @@ class CartResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $product->name,
-            "variant" => $variant ? [
-                "color" => $variant->color,
-                "size" => $variant->size,
-            ] : null,
+            "variant" => $variant ? $this->getVariantString($variant) : null,
             "price" => $variant ? $variant->price : $product->price,
             "quantity" => $this->quantity,
-            "image" => $product->firstImage->url ?? "#",
+            "image" => $product->images[0] ?? null,
+            "slug" => $product->slug,
         ];
+    }
+    private function getVariantString($variant)
+    {
+        if ($variant->color && $variant->size) {
+            return $variant->color . ", " . $variant->size;
+        }
+        return $variant->color ?? $variant->size;
     }
 }

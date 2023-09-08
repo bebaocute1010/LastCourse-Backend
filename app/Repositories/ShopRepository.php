@@ -11,6 +11,11 @@ class ShopRepository
         return Shop::find($id);
     }
 
+    public function findBySlug($slug)
+    {
+        return Shop::where("slug", $slug)->first();
+    }
+
     public function create(array $data)
     {
         return Shop::create($data);
@@ -27,11 +32,11 @@ class ShopRepository
     {
         $totalRating = 0;
         $ratingCount = 0;
-        $products = $shop->allProducts;
+        $products = $shop->allProducts()->with("allComments")->get();
         foreach ($products as $product) {
-            $totalRating += $product->getTotalRating();
-            $ratingCount += $product->evaluateComments()->count();
+            $totalRating += $product->allComments->sum("rating");
+            $ratingCount += $product->allComments->count();
         }
-        return round($totalRating / $ratingCount, 1);
+        return $totalRating / $ratingCount;
     }
 }

@@ -23,7 +23,6 @@ class BillFactory extends Factory
     public function definition()
     {
         $this->faker->addProvider(new Person($this->faker));
-
         $user_ids = User::all()->pluck("id")->toArray();
         $shop_ids = Shop::all()->pluck("id")->toArray();
         $carrier_ids = Carrier::all()->pluck("id")->toArray();
@@ -34,11 +33,11 @@ class BillFactory extends Factory
             "shop_id" => $this->faker->randomElement($shop_ids),
             "carrier_id" => $this->faker->randomElement($carrier_ids),
             "receiver" => trim($receiver[1] ?? $receiver[0]),
-            "phone" => $this->faker->phoneNumber(),
+            "phone" => "0" . $this->faker->numberBetween(111111111, 999999999),
             "address" => $this->faker->address(),
             "shipping_fee" => $this->faker->numberBetween(10000, 30000),
             "status" => $this->faker->numberBetween(1, 5),
-            "total" => $this->faker->numberBetween(1000, 20000000),
+            "total" => $this->faker->numberBetween(1000, 500000),
             "payment_method" => $this->faker->numberBetween(0, 1),
         ];
     }

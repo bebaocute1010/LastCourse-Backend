@@ -13,8 +13,17 @@ class Category extends Model
 
     protected $guarded = [];
 
-    public function parent()
+    public function getParentAttribute()
     {
-        return $this->belongsTo(Category::class, "parent_id");
+        if ($this->parent_id === null) {
+            return null;
+        }
+
+        return $this->belongsTo(Category::class, "parent_id")->first();
+    }
+
+    public function subCategories()
+    {
+        return $this->hasMany(Category::class, "parent_id");
     }
 }

@@ -7,23 +7,18 @@ use App\Models\Product;
 class ProductRepository
 {
     public function searchProducts(
-        array $keywords,
+        string $keywords,
         array $filter_cats = null,
         $filter_price_min = null,
         $filter_price_max = null,
         $filter_rating = null,
         bool $sort_newest = false,
         bool $sort_sell = false,
-        bool $sort_desc_price = null
+        $sort_desc_price,
+        $type
     ) {
-        $products = Product::where(function ($query) use ($keywords) {
-            foreach ($keywords as $keyword) {
-                $query->orWhere("name", "like", "%" . $keyword . "%");
-            }
-        })
-            ->when($filter_cats != null, function ($query) use ($filter_cats) {
-                $query->whereIn("cat_id", $filter_cats);
-            })
+        $products = Product::where("name", "like", "%" . $keywords . "%")
+            ->whereNull("is_hidden")
             ->when($filter_price_min != null, function ($query) use ($filter_price_min) {
                 $query->where("price", ">=", $filter_price_min);
             })
@@ -39,14 +34,19 @@ class ProductRepository
             ->when($sort_newest, function ($query) {
                 $query->orderByDesc("created_at");
             })
-            ->when($sort_sell, function ($query) {
+            ->when($sort_sell || $type == 3, function ($query) {
                 $query->orderByDesc("sold");
             })
-            ->when($sort_desc_price !== null, function ($query) use ($sort_desc_price) {
-                $query->orderBy("price", $sort_desc_price ? "desc" : "asc");
+            ->when($sort_desc_price != null, function ($query) use ($sort_desc_price) {
+                $query->orderBy("price", $sort_desc_price == "true" ? "desc" : "asc");
             })
+            ->with("allComments")
             ->get();
-        info($products);
+        if ($type == 2) {
+            return $products->sortByDesc(function ($product) {
+                return $product->allComments->sum("rating");
+            });
+        }
         return $products;
     }
 
@@ -55,7 +55,7 @@ class ProductRepository
         $products = collect([]);
         $per_page = 12;
         if (auth()->check()) {
-            $cat_ids = auth()->user()->allProducts()->pluck("cat_id");
+            $cat_ids = auth()->user()->allProducts()->pluck("cat_id")->unique();
 
             $products = Product::whereIn("cat_id", function ($query) use ($cat_ids) {
                 $query->select("id")
@@ -63,24 +63,33 @@ class ProductRepository
                     ->whereIn("id", $cat_ids)
                     ->orWhereIn("parent_id", $cat_ids);
             })
+                ->whereNull("is_hidden")
                 ->orderByDesc("sold")
                 ->get();
         }
-        $all_products = Product::orderByDesc("sold")->get();
+        $all_products = Product::orderByDesc("sold")
+            ->whereNull("is_hidden")
+            ->get();
         $result = $products->concat($all_products)->unique()->slice(($page - 1) * $per_page, $per_page);
         return $result;
     }
 
     public function getTopSellingProducts()
     {
-        return Product::orderByDesc("sold")->take(12)->get();
+        return Product::orderByDesc("sold")
+            ->whereNull("is_hidden")
+            ->take(12)
+            ->get();
     }
 
-    public function getFeaturedProducts()
+    public function getFeaturedProducts($page = 1)
     {
-        return Product::all()->sortByDesc(function ($product) {
-            return $product->getTotalRating();
-        })->take(12);
+        $offset = ($page - 1) * 12;
+        return Product::with("allComments")
+            ->whereNull("is_hidden")
+            ->get()->sortByDesc(function ($product) {
+            return $product->allComments->sum("rating");
+        })->skip($offset)->take(12);
     }
 
     public function find($id)
@@ -95,11 +104,12 @@ class ProductRepository
 
     public function getDetails($slug)
     {
-        return Product::with(['variants.colorImage', 'variants.sizeImage'])->where('slug', $slug)->first();
+        return Product::with(["variants", "allComments"])->where("slug", $slug)->first();
     }
 
     public function updateOrCreate(array $data)
     {
+        info($data);
         if (isset($data["id"])) {
             $product = $this->find($data["id"]);
             $product->update($data);

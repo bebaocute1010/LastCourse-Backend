@@ -18,8 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('bill_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('comment_id')->nullable();
-            $table->json('image_ids');
+            $table->json('images');
             $table->string('content', 1000)->nullable();
             $table->unsignedInteger('rating')->default(0);
             $table->softDeletes();

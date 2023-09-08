@@ -8,16 +8,19 @@ use App\Http\Resources\ProductInforResource;
 use App\Http\Resources\ProductShopResource;
 use App\Http\Resources\ShopInforResource;
 use App\Http\Resources\ShopProfileResource;
+use App\Services\CategoryService;
 use App\Services\FollowerService;
 use App\Services\ProductService;
 use App\Services\ShopService;
 use App\Utils\MessageResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 
 class ShopController extends Controller
 {
     private $shop_service;
+    private $category_service;
     private $bill_ctl;
     private $product_service;
     private $follower_service;
@@ -25,6 +28,7 @@ class ShopController extends Controller
     public function __construct()
     {
         $this->shop_service = new ShopService();
+        $this->category_service = new CategoryService();
         $this->product_service = new ProductService();
         $this->follower_service = new FollowerService();
         $this->bill_ctl = new BillController;
@@ -46,12 +50,14 @@ class ShopController extends Controller
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }
 
-    public function getShopProfile($id)
+    public function getShopProfile(Request $request)
     {
-        if ($shop = $this->shop_service->find($id)) {
+        if ($shop = $this->shop_service->findBySlug($request->slug)) {
             $shop->is_followed = $this->follower_service->checkFollowed($shop->id);
+            $shop->products = $shop->filterProducts($request->search);
             return new ShopProfileResource($shop);
         }
+        return JsonResponse::error("Không tìm thấy shop.", JsonResponse::HTTP_CONFLICT);
     }
 
     public function getInforShop()
@@ -62,6 +68,9 @@ class ShopController extends Controller
     public function getProduct(Request $request)
     {
         if ($product = $this->product_service->find($request->id)) {
+            $category_family = $this->category_service->getCategoryFamily($product->category);
+            $product->categories = $category_family["categories"];
+            $product->categories_selected = $category_family["categories_selected"];
             if ($product->shop_id == auth()->user()->shop->id) {
                 return new ProductInforResource($product);
             }
@@ -69,21 +78,25 @@ class ShopController extends Controller
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }
 
-    public function getProducts()
+    public function getProducts(Request $request)
     {
-        return ProductShopResource::collection(auth()->user()->shop->allProducts);
+        $products = auth()->user()->shop->allProducts;
+        if ($request->search) {
+            return ProductShopResource::collection($this->shop_service->filterProducts($products, $request->search));
+        }
+        return ProductShopResource::collection($products);
     }
 
-    public function getBills()
+    public function getBills(Request $request)
     {
-        return $this->bill_ctl->getBills(true);
+        return $this->bill_ctl->getBills($request, true);
     }
 
-    public function updateOrCreate(CreateShopRequest $request)
+    public function updateOrCreate(CreateShopRequest $request, Route $route)
     {
         $data_validated = $request->validated();
         $data_validated["user_id"] = auth()->id();
-        if ($request->id) {
+        if (str_ends_with($route->uri, "update")) {
             if ($this->shop_service->update($request->id, $data_validated)) {
                 return JsonResponse::success(MessageResource::DEFAULT_SUCCESS_TITLE, MessageResource::SHOP_UPDATE_SUCCESS);
             }

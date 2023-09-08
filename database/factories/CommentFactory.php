@@ -64,15 +64,27 @@ class CommentFactory extends Factory
         ];
 
         $random_number = $this->faker->numberBetween(1, 5);
-        $image_ids = [];
+        $images = [];
+        $comment_images = [
+            "https://storage.googleapis.com/cdn.nhanh.vn/store/25618/artCT/87825/ao_thun_unisex_nam_1.jpg",
+            "https://storage.googleapis.com/cdn.nhanh.vn/store/25618/artCT/87825/ao_thun_unisex_nam_2.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVcAk-mybOPU1Zey2t_UC9LIrZ31lb2-oR-lSlQ7eN2UTDuCPaes_FohAFr_12rEnQSCU&usqp=CAU",
+            "https://cf.shopee.vn/file/077c826170aaf376def0aeca0ff6061a",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrb88NQQbFpMb9P1GhlxZ-w23-fK-hLiEBljEFoUcKdYHUtEoTVKlVb1xYljl_3Zsut_I&usqp=CAU",
+            "https://salt.tikicdn.com/cache/w1200/ts/product/cb/d2/a0/c2bd00e68910e5162272f0dc2ef165f1.jpg",
+            "https://bizweb.dktcdn.net/100/386/478/products/6062613d-70ad-4f61-918f-1f14d1d3a48e.jpg?v=1648116718603",
+            "https://shop.dazlinn.com/wp-content/uploads/2022/08/ao-thun-fromm-r-ng-n-ao-thun-ki-u-n-han-qu-c-v-i-cotton-thoang-mat-ao-phong.jpg",
+            "https://cdn.gumac.vn/image/01/onpage/bai-39/ao-phong-nu-mau-vang270320191106274172.jpg",
+            "https://ghp-garment.com/wp-content/uploads/2022/09/ao-phong-nu-form-rong-famous-in-hinh-gau-ao-thun-nu-cotton-oversize-tay-ngan-co-tron-1-scaled.jpg",
+        ];
         for ($i = 0; $i < $random_number; $i++) {
-            $image_ids[] = $this->faker->numberBetween(13, 22);
+            $images[] = $this->faker->randomElement($comment_images);
         }
         return [
-            "bill_id" => $this->faker->numberBetween(1, 1000),
-            "product_id" => $this->faker->numberBetween(1, 320),
+            "bill_id" => $this->faker->numberBetween(1, 5000),
+            "product_id" => $this->faker->numberBetween(1, 1069),
             "user_id" => $this->faker->numberBetween(1, 50),
-            "image_ids" => $image_ids,
+            "images" => $images,
             "content" => $this->faker->randomElement($customer_reviews),
             "rating" => $this->faker->numberBetween(3, 5),
         ];

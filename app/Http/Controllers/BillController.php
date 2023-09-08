@@ -24,19 +24,45 @@ class BillController extends Controller
     public function getBillDetails(Request $request)
     {
         if ($bill = $this->bill_service->find($request->id)) {
-            if ($bill->user_id == auth()->id()) {
-                return BillDetailResource::collection($bill->details);
+            if ($bill->user_id == auth()->id() || $bill->shop_id == auth()->user()->shop->id) {
+                $details = BillDetailResource::collection($bill->details);
+                $detailsArray = [];
+                foreach ($details as $detail) {
+                    $detailsArray[] = $detail->toArray($request);
+                }
+                $result = [
+                    "code" => "#" . $bill->code,
+                    "note" => $bill->note,
+                    "total" => $bill->total - $bill->shipping_fee,
+                    "shipping_fee" => $bill->shipping_fee,
+                    "details" => $detailsArray,
+                ];
+                return JsonResponse::successWithData($result);
             }
         }
         return JsonResponse::error("Fail", JsonResponse::HTTP_CONFLICT);
     }
 
-    public function getBills($isShop = null)
+    public function getBills(Request $request, $is_shop = null)
     {
-        if (!$isShop) {
-            return BillResource::collection(auth()->user()->bills);
+        $search = $request->search ?? "";
+        if (!$is_shop) {
+            $bills = auth()->user()->bills()->with("details")->with([
+                'products' => function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%");
+                },
+            ])->get();
+        } else {
+            $bills = auth()->user()->shop->bills()->with("details")->with([
+                'products' => function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%");
+                },
+            ])->get();
         }
-        return BillResource::collection(auth()->user()->shop->bills);
+        if ($search_string = $request->search) {
+            return BillResource::collection($this->bill_service->getFilterBill($bills, $search_string));
+        }
+        return BillResource::collection($bills);
     }
 
     public function updateOrCreate(CreateBillRequest $request)

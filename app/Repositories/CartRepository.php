@@ -8,7 +8,7 @@ class CartRepository
 {
     public function findCarts(array $ids)
     {
-        return Cart::whereIn("id", $ids)->get();
+        return Cart::whereIn("id", $ids)->with(["product", "variant"])->get();
     }
 
     public function find($id = null, $user_id = null, $product_id = null, $product_variant_id = null)

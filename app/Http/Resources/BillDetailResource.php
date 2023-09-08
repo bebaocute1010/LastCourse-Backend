@@ -19,10 +19,12 @@ class BillDetailResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->product->name,
-            "image" => $this->product->firstImage->url,
+            "slug" => $this->product->slug,
+            "image" => $this->product->images[0],
             "price" => $this->price,
             "variant" => $variant ? $this->getVariantString($variant) : "-",
             "quantity" => $this->quantity,
+            "cost" => $this->price * $this->quantity,
             "have_evaluated" => $this->bill->status != Bill::STATUS_SUCCESS ? false : ($this->comment() ? true : null),
         ];
     }

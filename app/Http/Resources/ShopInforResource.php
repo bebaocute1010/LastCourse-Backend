@@ -18,10 +18,11 @@ class ShopInforResource extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "email" => $this->email,
-            "avatar" => $this->avatar()->url,
-            "banner" => $this->banner()->url,
+            "avatar" => $this->avatar,
+            "banner" => $this->banner,
             "locate" => $this->locate,
             "carrier_id" => $this->carrier_id,
+            "warehouse" => $this->warehouse,
         ];
     }
 }

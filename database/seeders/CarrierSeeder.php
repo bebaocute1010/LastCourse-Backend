@@ -29,7 +29,7 @@ class CarrierSeeder extends Seeder
         ];
 
         foreach ($names as $name) {
-            Carrier::updateOrCreate($name);
+            Carrier::updateOrCreate($name, $name);
         }
     }
 }

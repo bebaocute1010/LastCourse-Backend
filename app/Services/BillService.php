@@ -26,6 +26,24 @@ class BillService
         $this->cart_service = new CartService();
     }
 
+    public function getFilterBill($bills, $search_string)
+    {
+        $search_string = strtolower($search_string);
+        $filtered_bills = $bills->filter(function ($bill) use ($search_string) {
+            if (
+                str_contains(strtolower($bill->receiver), $search_string)
+                || str_contains(strtolower($bill->phone), $search_string)
+                || str_contains(strtolower($bill->address), $search_string)
+                || str_contains(strtolower($bill->code), $search_string)
+                || $bill->products->count() > 0
+            ) {
+                return true;
+            }
+            return false;
+        })->values();
+        return $filtered_bills;
+    }
+
     public function find($id)
     {
         return $this->bill_repository->find($id);
@@ -48,7 +66,7 @@ class BillService
                 "id" => $cart->product_id,
                 "variant_id" => $cart->product_variant_id,
                 "quantity" => $cart->quantity,
-                "price" => $cart->product->price,
+                "price" => $this->getPrice($cart->product, $cart->variant, $cart->quantity),
             ];
         });
         $data = array_merge($data, [
@@ -80,6 +98,12 @@ class BillService
 
         $bill->update(["total" => array_sum($total) + $bill->shipping_fee]);
 
+        auth()->user()->update([
+            "last_receiver" => $data["receiver"],
+            "last_address" => $data["address"],
+            "last_phone" => $data["phone"],
+        ]);
+
         $bill->user->notify(new CreateBillNotification($bill));
         $bill->shop->notify(new CreateBillNotification($bill, true));
         return $bill;
@@ -98,5 +122,23 @@ class BillService
 
         // gia ship co ban * tong ship cac san pham * he so random
         return intval(round($carrier->price * (1 + $total)));
+    }
+
+    private function getPrice($product, $variant, $quantity)
+    {
+        $price = $product->promotional_price ?? $product->price;
+        if ($variant != null) {
+            $price = $variant->price;
+        }
+        if ($product->is_buy_more_discount) {
+            $discount_ranges = $product->discountRanges;
+            foreach ($discount_ranges as $discount) {
+                if ($quantity >= $discount->min && $quantity < $discount->max) {
+                    $price -= $discount->amount;
+                    break;
+                }
+            }
+        }
+        return $price;
     }
 }

@@ -19,7 +19,10 @@ return new class extends Migration
             $table->string('username', 20)->nullable()->unique();
             $table->string('password', 255)->nullable();
             $table->string("fullname", 255)->nullable();
-            $table->unsignedBigInteger("avatar")->default(1);
+            $table->string("avatar", 500)->nullable();
+            $table->string("last_receiver", 255)->nullable();
+            $table->string("last_address", 255)->nullable();
+            $table->string("last_phone", 255)->nullable();
             $table->date("birthday")->nullable();
             $table->tinyInteger("gender")->default(0)->nullable();
             $table->string('invite_code', 10)->unique();

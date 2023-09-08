@@ -23,7 +23,7 @@ class CartFactory extends Factory
         return [
             "user_id" => fake()->randomElement($user_ids),
             "product_id" => fake()->randomElement($product_ids),
-            "quantity" => fake()->numberBetween(0, 30),
+            "quantity" => fake()->numberBetween(0, 10),
         ];
     }
 }

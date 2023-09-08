@@ -34,7 +34,7 @@ class UpdateStatusBillNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ["mail", "database"];
+        return ["database", "mail"];
     }
 
     /**
@@ -45,11 +45,13 @@ class UpdateStatusBillNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
+        $url = env("FE_URL") . ($this->is_shop ? "shop/don-hang/quan-ly" : "don-hang-cua-toi") . "?code=" . $this->bill->code;
+        info($url);
         return (new MailMessage)
             ->subject("Đơn hàng #" . $this->bill->code)
             ->greeting("Xin chào, " . ($this->is_shop ? $notifiable->name : $notifiable->fullname) . "!")
             ->line($this->getMessages()[1])
-            ->action("Xem đơn hàng", env("FE_APP_URL") . ($this->is_shop ? "shop/don-hang/quan-ly" : "don-hang-cua-toi"))
+            ->action("Xem đơn hàng", $url)
             ->line("Cảm ơn bạn! Chúc bạn mua sắm vui vẻ tại M-Clothing");
     }
 
@@ -65,6 +67,8 @@ class UpdateStatusBillNotification extends Notification implements ShouldQueue
         return [
             "title" => $messages[0],
             "message" => $messages[1],
+            "code" => $this->bill->code,
+            "type" => $this->is_shop ? "shop" : "user",
         ];
     }
 

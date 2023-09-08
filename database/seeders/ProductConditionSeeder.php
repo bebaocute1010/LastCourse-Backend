@@ -16,7 +16,7 @@ class ProductConditionSeeder extends Seeder
     {
         $names = ["Hàng mới", "Hàng 99%", "Hàng đã qua sử dụng"];
         foreach ($names as $name) {
-            ProductCondition::create(["name" => $name]);
+            ProductCondition::updateOrCreate(["name" => $name], ["name" => $name]);
         }
     }
 }

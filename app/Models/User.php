@@ -23,21 +23,22 @@ class User extends Authenticatable implements JWTSubject
     public const STATUS_NOT_VERIFY = 1;
     public const STATUS_NOT_REGISTER_INFORMATION = 2;
     public const STATUS_NOT_EXIST = 3;
+    public const AVATAR_DEFAULT = "https://static.vecteezy.com/system/resources/previews/009/734/564/original/default-avatar-profile-icon-of-social-media-user-vector.jpg";
 
     protected $guarded = [];
 
     protected $hidden = [
-        'password',
-        'remember_token',
+        "password",
+        "remember_token",
     ];
 
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        "email_verified_at" => "datetime",
     ];
 
     public function allProducts()
     {
-        return $this->bills()->with('details.product')->get()->pluck('details')->flatten()->pluck('product');
+        return $this->bills()->with("details.product")->get()->pluck("details")->flatten()->pluck("product");
     }
 
     public function shop()
@@ -57,11 +58,6 @@ class User extends Authenticatable implements JWTSubject
             ->orderByDesc("created_at");
     }
 
-    public function avatar()
-    {
-        return Image::find($this->avatar);
-    }
-
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -71,8 +67,14 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    public function getAvatarAttribute()
+    {
+        return $this->attributes["avatar"] == null ? User::AVATAR_DEFAULT : $this->attributes["avatar"];
+    }
+
     public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = Hash::make($value);
+        $this->attributes["password"] = Hash::make($value);
     }
 }

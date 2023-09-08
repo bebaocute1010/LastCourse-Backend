@@ -18,11 +18,12 @@ class ProductShopResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
-            "image" => $this->firstImage->url ?? "#",
+            "slug" => $this->slug,
+            "image" => $this->images[0] ?? null,
             "price" => $this->price,
             "status" => $this->is_hidden ? Product::STATUS_HIDDEN
             : ($this->inventory <= 0 ? Product::STATUS_UNAVAILABLE : Product::STATUS_AVAILABLE),
-            "warehouse" => $this->warehouse->name,
+            "warehouse" => $this->warehouse,
             "sold" => $this->sold,
             "inventory" => $this->inventory,
         ];

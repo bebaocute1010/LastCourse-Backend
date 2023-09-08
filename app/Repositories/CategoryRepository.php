@@ -6,37 +6,23 @@ use App\Models\Category;
 
 class CategoryRepository
 {
-    public function getCategoriesLevel1()
+    public function categoriesHome()
     {
-        return Category::whereNull("parent_id")->get();
+        return Category::whereNotNull("image")->get();
     }
 
-    public function getCategoriesLevel2($parent_id)
+    public function all()
     {
-        return Category::where("parent_id", $parent_id)->get();
+        return Category::all();
     }
 
-    public function searchCategories(array $keywords = [])
+    public function getCategoriesInArray(array $cat_ids)
     {
-        $categories = Category::where(function ($query) use ($keywords) {
-            foreach ($keywords as $keyword) {
-                $query->orWhere("name", "like", "%" . $keyword . "%");
-            }
-        })
-            ->get()
-            ->sortByDesc(function ($category) use ($keywords) {
-                $name = strtolower($category->name);
-                $count = 0;
+        return Category::whereIn("id", $cat_ids)->get();
+    }
 
-                foreach ($keywords as $keyword) {
-                    if (strpos($name, strtolower($keyword)) !== false) {
-                        $count++;
-                    }
-                }
-
-                return $count;
-            })
-            ->take(10);
-        return $categories;
+    public function getSubCategories($parent_id)
+    {
+        return Category::where("parent_id", $parent_id)->select("id", "name", "image")->get();
     }
 }

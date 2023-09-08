@@ -19,8 +19,8 @@ class PreviewOrderResource extends JsonResource
         $delay = random_int(2, 5);
         return [
             "shop_name" => $shop->name,
-            "warehouse" => $shop->warehouse->address,
-            "shop_avatar" => $shop->avatar()->url,
+            "warehouse" => $shop->warehouse,
+            "shop_avatar" => $shop->avatar,
             "shipping_fee" => $this["shipping_fee"],
             "shipping_carrier" => $shop->carrier->name,
             "delivery_time" => PreviewOrderResource::formatDate(Carbon::now()->addDays($delay))

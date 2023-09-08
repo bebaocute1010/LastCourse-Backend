@@ -4,7 +4,6 @@ namespace App\Utils;
 
 use App\Http\Controllers\ImageController;
 use App\Models\Image;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
 class Uploader
@@ -26,31 +25,26 @@ class Uploader
         return Image::DEFAULT_AVATAR_ID;
     }
 
-    public function getImageIds(array $images)
+    public function getImagesUrl(array $images)
     {
-        $ids = [];
+        $images_url = [];
         foreach ($images as $image) {
             if (!$rs = $this->upload($image)) {
                 continue;
             }
-            $ids[] = $rs->id;
+            $images_url[] = $rs;
         }
-        return $ids;
+        return $images_url;
     }
 
-    public function upload($image, $id = null)
+    public function upload($image)
     {
         if (gettype($image) == "string") {
-            return $this->image_ctl->findUrl($image);
+            return $image;
         }
         $filename = $image->store(Image::DIR_PATH);
         $url = config("app.url") . Storage::url($filename);
-        $data = [];
-        if ($id && $id > 22) {
-            $data = Arr::add($data, "id", $id);
-        }
-        $data = Arr::add($data, "url", $url);
-        return $this->image_ctl->updateOrCreate($data);
+        return $url;
     }
 
     public function delete($id)

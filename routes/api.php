@@ -15,15 +15,16 @@ Route::prefix("get")->group(function () {
     Route::controller(AuthController::class)->middleware("auth:api")->group(function () {
         Route::prefix("notifications")->group(function () {
             Route::get("/", "getNotiifications");
+            Route::put("mark-read", "markReadNotification");
             Route::put("mark-read-all", "markReadAllNotifications");
         });
         Route::get("number-cart", "getNumberCart");
     });
 
     Route::controller(CategoryController::class)->prefix("category")->group(function () {
-        Route::get("search", "searchCategories");
-        Route::get("level1", "getCategoriesLevel1");
-        Route::get("level2", "getCategoriesLevel2");
+        Route::get("all", "all");
+        Route::get("categories-home", "categoriesHome");
+        Route::get("categories", "getCategories");
     });
     Route::get("carriers", [CarrierController::class, "getCarriers"]);
 
@@ -37,7 +38,7 @@ Route::prefix("get")->group(function () {
     });
 
     Route::controller(ShopController::class)->group(function () {
-        Route::get("shop/{id}", "getShopProfile");
+        Route::get("shop", "getShopProfile");
     });
 });
 
@@ -53,6 +54,8 @@ Route::prefix("auth")->controller(AuthController::class)->group(function () {
     Route::post("verify-account", "verifyAccount");
     Route::post("register-information", "registerInformation");
     Route::post("get-otp", "sendOtp");
+    Route::post("forgot-password", "forgotPassword");
+    Route::post("reset-password", "resetPassword");
 });
 
 Route::prefix("product")->controller(ProductController::class)->group(function () {
@@ -88,7 +91,7 @@ Route::prefix("shop")->controller(ShopController::class)->middleware("auth:api")
 Route::prefix("cart")->controller(CartController::class)->middleware("auth:api")->group(function () {
     Route::post("create", "updateOrCreate");
     Route::post("update", "updateOrCreate");
-    Route::delete("delete", "delete");
+    Route::post("delete", "delete");
 
     Route::post("preview-order", "previewOrder");
     Route::get("get", "getProducts");

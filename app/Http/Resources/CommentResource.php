@@ -19,12 +19,11 @@ class CommentResource extends JsonResource
             "id" => $this->id,
             "user" => [
                 "name" => $user->fullname,
-                "avatar" => $user->avatar()->url,
+                "avatar" => $user->avatar,
             ],
             "content" => $this->content,
-            "images" => $this->getImages()->pluck("url"),
+            "images" => $this->images,
             "rating" => $this->rating,
-            "replies" => CommentResource::collection($this->replies),
         ];
     }
 }

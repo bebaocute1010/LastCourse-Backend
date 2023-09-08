@@ -36,11 +36,11 @@ class CommentService
         $detail = $this->bill_detail_service->find($data["detail_id"]);
         $data = array_merge($data, [
             "user_id" => auth()->id(),
-            "image_ids" => isset($data["images"]) ? $this->uploader->getImageIds($data["images"]) : [],
             "bill_id" => $detail->bill_id,
             "product_id" => $detail->product_id,
         ]);
-        Arr::forget($data, ["images", "detail_id"]);
+        $data["images"] = isset($data["images"]) ? $this->uploader->getImagesUrl($data["images"]) : [];
+        Arr::forget($data, ["detail_id"]);
 
         if (!$id) {
             $comment_updated = $this->comment_repository->create($data);

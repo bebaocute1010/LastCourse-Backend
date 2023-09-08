@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Utils\MessageResource;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\JsonResponse;
 
 class CreateProductRequest extends FormRequest
 {
@@ -34,12 +32,13 @@ class CreateProductRequest extends FormRequest
             "name" => "required|string|max:255",
             "detail" => "required|string|max:1500",
             "brand" => "nullable|string|max:100",
-            "price" => "required|integer",
-            "promotional_price" => "nullable|integer",
-            "weight" => "required|integer",
-            "length" => "required|integer",
-            "width" => "required|integer",
-            "height" => "required|integer",
+            "price" => "required|numeric",
+            "promotional_price" => "nullable|numeric",
+            "inventory" => "nullable|numeric|min:0",
+            "weight" => "required|numeric",
+            "length" => "required|numeric",
+            "width" => "required|numeric",
+            "height" => "required|numeric",
             "variant_names" => "nullable|array|min:1|max:2",
             "variant_images" => "nullable|array|min:1|max:2",
             "variants_item_quantity" => "nullable|array|min:1",
