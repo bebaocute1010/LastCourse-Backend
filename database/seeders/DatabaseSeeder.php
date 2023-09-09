@@ -27,9 +27,9 @@ class DatabaseSeeder extends Seeder
         $this->call(ProductSeeder::class);
         User::factory(50)->create();
         Cart::factory(1000)->create();
-        Bill::factory(5000)->create();
-        BillDetail::factory(20000)->create();
-        Comment::factory(20000)->create();
+        Bill::factory(1000)->create();
+        BillDetail::factory(5000)->create();
+        Comment::factory(5000)->create();
         // ProductVariant::factory(2000)->create();
     }
 }

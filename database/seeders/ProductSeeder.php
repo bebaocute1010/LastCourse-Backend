@@ -82,7 +82,7 @@ class ProductSeeder extends Seeder
             "Bộ Quần Áo Thể Thao Nam Mùa Hè Unisex, Hình Thêu Sắc Nét, Phong Cách Cao Cấp - Bộ quần áo thể thao nam mùa hè unisex với hình thêu sắc nét. Phong cách cao cấp và thiết kế đẹp mắt mang đến sự năng động và tự tin cho người mặc.",
             "Bộ thể thao nam nữ áo tay ngắn quần short dáng rộng thời trang Phối Dây Rút bản to Thời Trang Unisex - Bộ thể thao nam nữ gồm áo tay ngắn và quần short dáng rộng. Thiết kế phối dây rút bản to tạo nên vẻ thời trang và thoải mái. Phù hợp cho cả nam và nữ.",
         ];
-        $json = \File::get(public_path() . "\DataSeeder\Products\data.json");
+        $json = \File::get(public_path() . "/DataSeeder/Products/data.json");
         $array_data = json_decode($json, true);
         foreach ($array_data as $data) {
             foreach ($data["items"] as $product) {
