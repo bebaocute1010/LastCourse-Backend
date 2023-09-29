@@ -13,7 +13,7 @@ class CategoryRepository
 
     public function all()
     {
-        return Category::all();
+        return Category::orderByDesc('id')->get();
     }
 
     public function getCategoriesInArray(array $cat_ids)

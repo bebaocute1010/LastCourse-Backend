@@ -25,6 +25,7 @@ Route::prefix("get")->group(function () {
         Route::get("all", "all");
         Route::get("categories-home", "categoriesHome");
         Route::get("categories", "getCategories");
+        Route::get("show", "show");
     });
     Route::get("carriers", [CarrierController::class, "getCarriers"]);
 
@@ -113,4 +114,10 @@ Route::prefix("bill")->controller(BillController::class)->middleware("auth:api")
 
     Route::get("get", "getBills");
     Route::get("details", "getBillDetails");
+});
+
+Route::prefix("category")->controller(CategoryController::class)->group(function () {
+    Route::post("", "store");
+    Route::post("update", "update");
+    Route::delete("delete/{id}", "delete");
 });
