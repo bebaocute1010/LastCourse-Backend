@@ -121,3 +121,7 @@ Route::prefix("category")->controller(CategoryController::class)->group(function
     Route::post("update", "update");
     Route::delete("delete/{id}", "delete");
 });
+
+Route::prefix("voucher")->controller(\App\Http\Controllers\VoucherController::class)->group(function () {
+    Route::post("", "store");
+});
