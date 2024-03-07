@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use Illuminate\Database\Seeder;
-Illuminate\Support\Str;
+use Illuminate\Support\Str;
 
 class CategorySeeder extends Seeder
 {
