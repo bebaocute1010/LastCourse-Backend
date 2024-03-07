@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use Illuminate\Database\Seeder;
+Illuminate\Support\Str;
 
 class CategorySeeder extends Seeder
 {
@@ -122,6 +123,11 @@ class CategorySeeder extends Seeder
 
     private function updateOrCreate(array $data)
     {
-        return Category::updateOrCreate(["name" => $data["name"], "parent_id" => $data["parent_id"]], $data);
+        return Category::updateOrCreate(
+            [
+                "name" => $data["name"],
+                "parent_id" => $data["parent_id"]
+            ],
+            array_merge($data, ['code' => Str::slug($data['name'])]));
     }
 }

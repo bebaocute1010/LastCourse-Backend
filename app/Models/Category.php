@@ -23,11 +23,6 @@ class Category extends Model
         return $this->belongsTo(Category::class, "parent_id")->first();
     }
 
-    public function setCodeAttribute($value) 
-    {
-        $this->attributes['code'] = Str::slug($this->attributes['name']);
-    }
-
     public function subCategories()
     {
         return $this->hasMany(Category::class, "parent_id");
