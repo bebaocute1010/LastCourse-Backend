@@ -25,7 +25,7 @@ class Category extends Model
 
     public function setCodeAttribute($value) 
     {
-        $this->attributes['code'] = Str::slug($this->attributes['name'])
+        $this->attributes['code'] = Str::slug($this->attributes['name']);
     }
 
     public function subCategories()
