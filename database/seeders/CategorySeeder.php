@@ -128,6 +128,6 @@ class CategorySeeder extends Seeder
                 "name" => $data["name"],
                 "parent_id" => $data["parent_id"]
             ],
-            array_merge($data, ['code' => Str::slug($data['name'])]));
+            array_merge($data, ['code' => Str::random(12)]));
     }
 }
