@@ -106,7 +106,7 @@ class CategorySeeder extends Seeder
                 ],
             ],
         ];
-
+        
         $this->loadCats($cats);
     }
 
